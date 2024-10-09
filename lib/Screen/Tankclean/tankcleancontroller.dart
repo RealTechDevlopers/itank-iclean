@@ -24,11 +24,11 @@
 //     }
 //   }
 //
-//   // void onBeforeImageTap() {
-//   //   Get.snackbar('Before Clean', 'Before Clean image tapped');
-//   // }
+// // void onBeforeImageTap() {
+// //   Get.snackbar('Before Clean', 'Before Clean image tapped');
+// // }
 //
-//   // void onAfterImageTap() {
-//   //   Get.snackbar('After Clean', 'After Clean image tapped');
-//   // }
+// // void onAfterImageTap() {
+// //   Get.snackbar('After Clean', 'After Clean image tapped');
+// // }
 // }

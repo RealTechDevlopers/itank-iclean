@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iclean/Screens/Dashboard/pre_home_controller.dart';
-
-
 class TankListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -12,7 +10,7 @@ class TankListScreen extends StatelessWidget {
         backgroundColor: Colors.blueAccent,
         title: Obx(() {
           return Text(
-            'Home (${preHomeController.filteredItem.length})',
+            'Dashboard (${preHomeController.filteredItem.length})',
             style: const TextStyle(color: Colors.white,
               fontWeight: FontWeight.bold,
               fontSize: 22,
@@ -46,7 +44,6 @@ class TankListScreen extends StatelessWidget {
               if (preHomeController.filteredItem.isEmpty) {
                 return const Center(child: Text('No items available', style: TextStyle(fontSize: 18)));
               }
-
               return ListView.builder(
                 itemCount: preHomeController.filteredItem.length,
                 itemBuilder: (context, index) {
