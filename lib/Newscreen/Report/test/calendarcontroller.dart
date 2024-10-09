@@ -11,6 +11,7 @@ class CalendarController extends GetxController {
     events[DateTime.utc(2024, 10, 9)] = ['Event 1', 'Event 2'];
     events[DateTime.utc(2024, 10, 10)] = ['Event 3'];
   }
+
   List<String> getEventsForDay(DateTime day) {
     return events[day] ?? [];
   }
