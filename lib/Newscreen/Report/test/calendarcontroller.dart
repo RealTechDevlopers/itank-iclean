@@ -1,25 +1,30 @@
 import 'package:get/get.dart';
-import 'package:table_calendar/table_calendar.dart';
-class CalendarController extends GetxController {
-  var selectedDay = DateTime.now().obs;
-  var focusedDay = DateTime.now().obs;
-  var calendarFormat = CalendarFormat.month.obs;
-  var events = <DateTime, List<String>>{}.obs;
+
+class CleaningController extends GetxController {
+  // Cleaning data as an observable
+  var cleaningData = <DateTime, List<String>>{}.obs;
+
   @override
   void onInit() {
     super.onInit();
-    events[DateTime.utc(2024, 10, 9)] = ['Event 1', 'Event 2'];
-    events[DateTime.utc(2024, 10, 10)] = ['Event 3'];
+    // Adding dummy data for testing
+    cleaningData[DateTime.utc(2024, 10, 1)] = ['Tank A'];
+    cleaningData[DateTime.utc(2024, 10, 3)] = ['Tank B'];
   }
 
+  // Check if a tank cleaning is overdue (> 15 days)
+  bool isOverdue(DateTime lastCleanedDate) {
+    return DateTime.now().difference(lastCleanedDate).inDays > 15;
+  }
+
+  // Check if a tank cleaning is due soon (within 2 days)
+  bool isDueSoon(DateTime lastCleanedDate) {
+    final difference = DateTime.now().difference(lastCleanedDate).inDays;
+    return difference >= 13 && difference <= 15;
+  }
+
+  // Function to get events (cleanings) for a specific day
   List<String> getEventsForDay(DateTime day) {
-    return events[day] ?? [];
-  }
-  void onDaySelected(DateTime selected, DateTime focused) {
-    selectedDay.value = selected;
-    focusedDay.value = focused;
-  }
-  void onFormatChanged(CalendarFormat format) {
-    calendarFormat.value = format;
+    return cleaningData[day] ?? [];
   }
 }
