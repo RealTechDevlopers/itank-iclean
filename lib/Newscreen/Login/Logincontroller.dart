@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
-
 import '../Dashboard/Dashboard.dart';
-
 class LogController extends GetxController {
   var username = ''.obs;
   var password = ''.obs;
@@ -39,11 +37,11 @@ class LogController extends GetxController {
       if (responseData == 'success') {
         Get.snackbar('Login Success', 'Welcome back!',colorText:Colors.white,
             snackPosition: SnackPosition.BOTTOM,backgroundColor: Colors.green,duration: Duration(seconds: 1));
-        Get.to(Dssh());
-        //Get.offAllNamed(const Dssh() as String); //Sir! intha line enna pannu ?,navigate to home after success make like a function then use it, Ok sir
+        Get.to(CleaningCalendar());
+        //Get.offAllNamed(const Dssh() as String);
       } else {
-        // entire code is right ah sir?yes// ok sir ok da bye//Thank you sir//if any doubt i will ask
-
+        Get.snackbar('Invalid', 'Enter correct user name and password',colorText:Colors.white,
+            snackPosition: SnackPosition.BOTTOM,backgroundColor: Colors.red,duration: Duration(seconds:1));
         errorMessage.value = responseData ?? 'Login failed';
       }
     } else {

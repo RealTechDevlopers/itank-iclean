@@ -3,7 +3,6 @@
 // import '../User creation/president_creation.dart';
 // import '../login/login_scr.dart';
 // import 'Model_data.dart';
-//
 // class Home_Controller extends GetxController {
 //   var isAdminVisible = true.obs;
 //   var isPresidentVisible = false.obs;

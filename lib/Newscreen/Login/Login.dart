@@ -57,6 +57,8 @@ class LogScreen extends StatelessWidget {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your username';
+                    }else if (value.length < 3){
+                      return 'Username must be at least 3 characters';
                     }
                     return null;
                   },
@@ -86,7 +88,10 @@ class LogScreen extends StatelessWidget {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your password';
                     }
-                    return null; // Valid input
+                    // else if (value.length < 6){
+                    //   return 'Password must be at 3 characters ';
+                    // }
+                    return null;
                   },
                   onChanged: (value) {
                     controller.password.value = value;
@@ -95,7 +100,9 @@ class LogScreen extends StatelessWidget {
                 const SizedBox(height: 30),
                 ElevatedButton(
                   onPressed: () {
+                    if(_formKey.currentState!.validate()){
                       controller.login();
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.green,

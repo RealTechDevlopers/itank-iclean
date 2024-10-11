@@ -15,7 +15,7 @@ class FirstController extends GetxController {
     bool isLoggedIn = box.read('isLoggedIn') ?? false;
 
     if (isLoggedIn) {
-      Get.offAll(() => Dssh());
+      Get.offAll(() => CleaningCalendar());
     } else {
       Get.offAll(() => LogScreen());
     }

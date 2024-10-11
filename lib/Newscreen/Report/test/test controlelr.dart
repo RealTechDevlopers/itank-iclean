@@ -1,6 +1,7 @@
+
 import 'package:get/get.dart';
 
-class CleaningController extends GetxController {
+class CleanController extends GetxController {
   // Cleaning data: Map of last cleaned dates and corresponding tank names
   var cleaningData = <DateTime, List<String>>{}.obs;
 
