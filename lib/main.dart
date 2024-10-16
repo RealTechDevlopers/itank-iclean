@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get_storage/get_storage.dart';
-import 'Newscreen/Camera/Test2/cam.dart';
 import 'Newscreen/Camera/Test2/lazybinding.dart';
-import 'Newscreen/Camera/Test3/geotag.dart';
+import 'Newscreen/Dashboard/DashwithAPI/house.dart';
 void main() async{
   await GetStorage.init();
   runApp(const MyApp());
@@ -20,7 +19,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: GeoCameraApp()
+      home: TankPage()
     );
   }
 }

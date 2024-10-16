@@ -75,9 +75,37 @@ class _GeoCameraAppState extends State<GeoCameraApp> {
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                _imageFile == null
-                    ? const Text('No image selected.')
-                    : Image.file(_imageFile!), // Image background
+                Stack(
+                  children: [
+                    _imageFile == null
+                        ? const Text('No image selected.')
+                        : Image.file(_imageFile!), // Image background
+                    if (_currentPosition != null)
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        left: 0,
+                        child: Container(
+                          height: 80,
+                          color: Colors.black.withOpacity(0.5),
+                          padding: const EdgeInsets.all(5),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Location: ${_currentPosition!.latitude}, ${_currentPosition!.longitude}',
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                              const Text(
+                                'Name: Krishanan',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () async {
@@ -88,30 +116,6 @@ class _GeoCameraAppState extends State<GeoCameraApp> {
                 ),
               ],
             ),
-            if (_currentPosition != null)
-              Positioned(
-                bottom: 150,
-                right: 185,
-                child: Container(
-                  height: 50,
-                 // width: double.maxFinite,
-                  color: Colors.black.withOpacity(0.5),
-                  padding: const EdgeInsets.all(5),
-                  child: Text(
-                    'Location: ${_currentPosition!.latitude}, ${_currentPosition!.longitude}',
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                ),
-                // SizedBox(height: 10),
-                // Container(
-                //   color: Colors.black.withOpacity(0.5),
-                //   padding: const EdgeInsets.all(5),
-                //   child: Text(
-                //     'Captured on: ${DateTime.now()}',
-                //     style: const TextStyle(color: Colors.white),
-                //   ),
-                // ),
-              ),
           ],
         ),
       ),

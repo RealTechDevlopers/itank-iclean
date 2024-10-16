@@ -1,4 +1,3 @@
-// tank_model.dart
 class TankModel {
   final int id;
   final String name;
@@ -12,7 +11,6 @@ class TankModel {
     required this.location,
   });
 
-  // Factory method to create an instance from JSON
   factory TankModel.fromJson(Map<String, dynamic> json) {
     return TankModel(
       id: json['id'],

@@ -2,39 +2,63 @@ import 'dart:io';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:geolocator/geolocator.dart';
+
 class ImagegeoController extends GetxController {
   var beforeImage = Rx<File?>(null);
   var duringImage = Rx<File?>(null);
   var afterImage = Rx<File?>(null);
+
   var beforeGeoTag = Rxn<Map<String, double>>();
   var duringGeoTag = Rxn<Map<String, double>>();
   var afterGeoTag = Rxn<Map<String, double>>();
+
   final ImagePicker picker = ImagePicker();
+
   Future<void> pickImageFromCamera(String section) async {
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
 
     if (pickedFile != null) {
-      Position? position = await _determinePosition();
+      Position? position = await _determinePosition(); // Get current position
 
-      switch (section) {
-        case 'before':
-          beforeImage.value = File(pickedFile.path);
-          if (position != null) {
-            beforeGeoTag.value = {'latitude': position.latitude, 'longitude': position.longitude};
-          }
-          break;
-        case 'during':
-          duringImage.value = File(pickedFile.path);
-          if (position != null) {
-            duringGeoTag.value = {'latitude': position.latitude, 'longitude': position.longitude};
-          }
-          break;
-        case 'after':
-          afterImage.value = File(pickedFile.path);
-          if (position != null) {
-            afterGeoTag.value = {'latitude': position.latitude, 'longitude': position.longitude};
-          }
-          break;
+      if (position != null) {
+        switch (section) {
+          case 'before':
+            beforeImage.value = File(pickedFile.path);
+            beforeGeoTag.value = {
+              'latitude': position.latitude,
+              'longitude': position.longitude
+            };
+            break;
+
+          case 'during':
+            duringImage.value = File(pickedFile.path);
+            duringGeoTag.value = {
+              'latitude': position.latitude,
+              'longitude': position.longitude
+            };
+            break;
+
+          case 'after':
+            afterImage.value = File(pickedFile.path);
+            afterGeoTag.value = {
+              'latitude': position.latitude,
+              'longitude': position.longitude
+            };
+            break;
+        }
+      } else {
+        // If the location is not available, set geo-tag to null
+        switch (section) {
+          case 'before':
+            beforeGeoTag.value = null;
+            break;
+          case 'during':
+            duringGeoTag.value = null;
+            break;
+          case 'after':
+            afterGeoTag.value = null;
+            break;
+        }
       }
     }
   }
@@ -44,10 +68,8 @@ class ImagegeoController extends GetxController {
     bool serviceEnabled;
     LocationPermission permission;
 
-    // Test if location services are enabled.
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      // Location services are not enabled, return early with null.
       Get.snackbar('Error', 'Location services are disabled.');
       return null;
     }
@@ -56,19 +78,16 @@ class ImagegeoController extends GetxController {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        // Permissions are denied, return early with null.
         Get.snackbar('Error', 'Location permissions are denied');
         return null;
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
-      // Permissions are permanently denied, handle appropriately.
       Get.snackbar('Error', 'Location permissions are permanently denied');
       return null;
     }
 
-    // When permissions are granted, return the position.
     return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
   }
 }
