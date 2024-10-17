@@ -1,7 +1,7 @@
 import 'dart:io';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:geolocator/geolocator.dart';
 
 class ImagegeoController extends GetxController {
   var beforeImage = Rx<File?>(null);
@@ -88,6 +88,7 @@ class ImagegeoController extends GetxController {
       return null;
     }
 
-    return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    return await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
   }
 }

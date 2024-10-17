@@ -15,13 +15,17 @@ class Splash extends GetView<FirstController> {
             Image.asset('assets/Images/iclean.png'),
             const SizedBox(height: 20),
             Text(
-              "iTank Clean",
+              "iClean",
               style: GoogleFonts.averiaSerifLibre(
                 color: Colors.green,
                 fontSize: 27,
                 fontWeight: FontWeight.bold,
               ),
             ),
+            const SizedBox(
+              height: 200,
+            ),
+            const Text("V.1.0",style: TextStyle(color: Colors.green,fontSize: 18),)
           ],
         ),
       ),
