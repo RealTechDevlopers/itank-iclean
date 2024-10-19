@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'geotagcontroller.dart';
-
-
 class pictureImageScreen extends StatelessWidget {
   final PictureController _imageController = Get.put(PictureController());
-
   @override
   Widget build(BuildContext context) {
     TextEditingController _textController = TextEditingController();
-
     return Scaffold(
       appBar: AppBar(
-        title: Text('Overlay Text on Image'),
+        title: const Text('Overlay Text on Image'),
       ),
       body: Center(
         child: Column(
@@ -20,17 +16,17 @@ class pictureImageScreen extends StatelessWidget {
           children: [
             ElevatedButton(
               onPressed: _imageController.captureImage1,
-              child: Text('Capture Image'),
+              child: const Text('Capture Image'),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextField(
               controller: _textController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Enter overlay text',
               ),
               maxLines: 3,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
                 final mergedFile = await _imageController.mergeImageWithTextOverlay();
@@ -38,7 +34,7 @@ class pictureImageScreen extends StatelessWidget {
                   Get.snackbar('Success', 'Image with text overlay saved at ${mergedFile.path}');
                 }
               },
-              child: Text('Add Overlay Text'),
+              child: const Text('Add Overlay Text'),
             ),
           ],
         ),
