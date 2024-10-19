@@ -30,6 +30,11 @@ android {
         versionName = 1.0
     }
 
+    android {
+        ndkVersion = "25.1.8937393"
+
+    }
+
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.

@@ -12,8 +12,6 @@ class CleanController extends GetxController {
     cleaningData[DateTime.utc(2024, 10, 1)] = ['Tank A'];
     cleaningData[DateTime.utc(2024, 10, 3)] = ['Tank B'];
   }
-
-  // Check if cleaning is overdue (> 15 days)
   bool isOverdue(DateTime lastCleanedDate) {
     final difference = DateTime.now().difference(lastCleanedDate).inDays;
     return difference > 15;

@@ -1,47 +1,47 @@
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'geotagcontroller.dart';
 
-import '../camera.dart';
 
-
-class CameraAppView extends StatelessWidget {
-  final CameraAppController controller = Get.put(CameraAppController());
+class pictureImageScreen extends StatelessWidget {
+  final PictureController _imageController = Get.put(PictureController());
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController _textController = TextEditingController();
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Camera App with Location'),
+        title: Text('Overlay Text on Image'),
       ),
-      body: controller.cameraController == null || !controller.cameraController!.value.isInitialized
-          ? Center(child: CircularProgressIndicator())
-          : Stack(
-        children: [
-          // Camera preview
-          CameraPreview(controller.cameraController!),
-          // Capture button
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: FloatingActionButton(
-                onPressed: controller.captureImage,
-                child: Icon(Icons.camera),
-              ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: _imageController.captureImage1,
+              child: Text('Capture Image'),
             ),
-          ),
-          // Display latitude and longitude on the UI
-          Align(
-            alignment: Alignment.topCenter,
-            child: Obx(() {
-              return Text(
-                'Lat: ${controller.latitude.value}, Long: ${controller.longitude.value}',
-                style: TextStyle(color: Colors.white, fontSize: 18),
-              );
-            }),
-          ),
-        ],
+            SizedBox(height: 20),
+            TextField(
+              controller: _textController,
+              decoration: InputDecoration(
+                labelText: 'Enter overlay text',
+              ),
+              maxLines: 3,
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () async {
+                final mergedFile = await _imageController.mergeImageWithTextOverlay();
+                if (mergedFile != null) {
+                  Get.snackbar('Success', 'Image with text overlay saved at ${mergedFile.path}');
+                }
+              },
+              child: Text('Add Overlay Text'),
+            ),
+          ],
+        ),
       ),
     );
   }

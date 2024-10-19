@@ -1,105 +1,200 @@
-import 'package:camera/camera.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
-import 'dart:typed_data';
-import 'dart:ui' as ui;
-
-class CameraAppController extends GetxController {
-  CameraController? cameraController;
-  XFile? capturedImage;
-  var latitude = ''.obs;
-  var longitude = ''.obs;
-
+import 'Cameracontroller.dart';
+class ImageCaptureScreen extends StatelessWidget {
+  final ImageController controller = Get.put(ImageController());
   @override
-  void onInit() {
-    super.onInit();
-    initializeCamera();
-  }
-
-  // Initialize the camera
-  Future<void> initializeCamera() async {
-    final cameras = await availableCameras();
-    cameraController = CameraController(cameras.first, ResolutionPreset.high);
-    await cameraController!.initialize();
-    update();
-  }
-
-  // Capture Image and overlay text
-  Future<void> captureImage() async {
-    try {
-      XFile imageFile = await cameraController!.takePicture();
-      Position position = await Geolocator.getCurrentPosition();
-
-      latitude.value = position.latitude.toString();
-      longitude.value = position.longitude.toString();
-
-      File imageWithOverlay = await _addTextToImage(
-        File(imageFile.path),
-        latitude.value,
-        longitude.value,
-      );
-
-      capturedImage = XFile(imageWithOverlay.path);
-      update();
-    } catch (e) {
-      Get.snackbar('Error', 'Failed to capture image: $e');
-    }
-  }
-
-  // Overlay latitude and longitude onto the image
-  Future<File> _addTextToImage(File imageFile, String latitude, String longitude) async {
-    final bytes = await imageFile.readAsBytes();
-    final ui.Codec codec = await ui.instantiateImageCodec(bytes);
-    final ui.FrameInfo frameInfo = await codec.getNextFrame();
-    final ui.Image originalImage = frameInfo.image;
-
-    final recorder = ui.PictureRecorder();
-    final canvas = Canvas(recorder);
-    final paint = Paint();
-
-    // Draw the original image
-    canvas.drawImage(originalImage, Offset.zero, paint);
-
-    // Prepare the text to overlay
-    final textPainter = TextPainter(
-      text: TextSpan(
-        text: 'Lat: $latitude\nLong: $longitude',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 24,
-          shadows: [Shadow(blurRadius: 2, color: Colors.black, offset: Offset(1, 1))],
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Kutta palayam',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.green,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Before',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Center(
+              child: Obx(
+                    () => GestureDetector(
+                  onTap: () => controller.pickImageFromCamera('before'),
+                  onLongPress: () {
+                    if (controller.beforeImage.value != null) {
+                      _showImageModal(context, controller.beforeImage.value!);
+                    }
+                  },
+                  child: Container(
+                    width: 100, // Adjust size accordingly
+                    height: 100,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.green),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: controller.beforeImage.value == null
+                        ? const Icon(
+                      Icons.add_a_photo,
+                      size: 50,
+                      color: Colors.green,
+                    )
+                        : ClipRRect(
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: Image.file(
+                        controller.beforeImage.value!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Icon(
+                            Icons.error,
+                            color: Colors.red,
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 150),
+            const Text(
+              'During',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Center(
+              child: Obx(
+                    () => GestureDetector(
+                  onTap: () => controller.pickImageFromCamera('during'),
+                  onLongPress: () {
+                    if (controller.duringImage.value != null) {
+                      _showImageModal(context, controller.duringImage.value!);
+                    }
+                  },
+                  child: Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.green),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: controller.duringImage.value == null
+                        ? const Icon(
+                      Icons.add_a_photo,
+                      size: 50,
+                      color: Colors.green,
+                    )
+                        : ClipRRect(
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: Image.file(
+                        controller.duringImage.value!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Icon(
+                            Icons.error,
+                            color: Colors.red,
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 150),
+            const Text(
+              'After',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Center(
+              child: Obx(
+                    () => GestureDetector(
+                  onTap: () => controller.pickImageFromCamera('after'),
+                  onLongPress: () {
+                    if (controller.afterImage.value != null) {
+                      _showImageModal(context, controller.afterImage.value!);
+                    }
+                  },
+                  child: Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.green),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: controller.afterImage.value == null
+                        ? const Icon(
+                      Icons.add_a_photo,
+                      size: 50,
+                      color: Colors.green,
+                    )
+                        : ClipRRect(
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: Image.file(
+                        controller.afterImage.value!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Icon(
+                            Icons.error,
+                            color: Colors.red,
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
-      textDirection: TextDirection.ltr,
     );
-
-    textPainter.layout(minWidth: 0, maxWidth: originalImage.width.toDouble());
-    textPainter.paint(canvas, Offset(20, originalImage.height - 100));
-
-    // Finalize the drawing
-    final ui.Image finalImage = await recorder
-        .endRecording()
-        .toImage(originalImage.width, originalImage.height);
-    final ByteData? byteData = await finalImage.toByteData(format: ui.ImageByteFormat.png);
-    final Uint8List uint8List = byteData!.buffer.asUint8List();
-
-    // Save the modified image to a new file
-    final directory = await getApplicationDocumentsDirectory();
-    final newPath = path.join(directory.path, 'image_with_location.png');
-    final imageWithLocation = File(newPath);
-    await imageWithLocation.writeAsBytes(uint8List);
-
-    return imageWithLocation;
   }
-
-  // Dispose the camera when not in use
-  @override
-  void onClose() {
-    cameraController?.dispose();
-    super.onClose();
+  void _showImageModal(BuildContext context, File image) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.file(image, fit: BoxFit.contain),
+                const SizedBox(height: 10),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Close'),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }
