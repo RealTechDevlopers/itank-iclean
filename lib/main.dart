@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get_storage/get_storage.dart';
+import 'Newscreen/Camera/Operation/watermark.dart';
 import 'Newscreen/Camera/Test4/set.dart';
 void main() async{
   await GetStorage.init();

@@ -50,6 +50,7 @@ dependencies:
   path_provider: ^2.1.4
   exif: ^3.3.0
   image: ^4.3.0
+  image_watermark: ^0.1.0
 
 
 dev_dependencies:
