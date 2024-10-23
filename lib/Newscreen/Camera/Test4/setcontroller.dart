@@ -48,7 +48,7 @@ class writeController extends GetxController {
         latLong.value = 'Lat: ${position.latitude}, Long: ${position.longitude}';
 
         // Add lat/long to the image as a watermark
-        await _addLatLongWatermark(pickedImage.value!, position.latitude, position.longitude);
+        await _addWatermarksWithBlackLayer(pickedImage.value!, position.latitude, position.longitude, "My Custom Title");
       } else {
         latLong.value = "No image selected";
       }
@@ -59,19 +59,22 @@ class writeController extends GetxController {
       isLoading.value = false;
     }
   }
-  // Add latitude/longitude watermark to the image
-  Future<void> _addLatLongWatermark(File originalImage, double latitude, double longitude) async {
+
+
+  Future<void> _addWatermarksWithBlackLayer(File originalImage, double latitude, double longitude, String title) async {
     // Read the image file as a byte array
     final img.Image? image = img.decodeImage(await originalImage.readAsBytes());
     if (image == null) {
       return; // Exit if the image cannot be read
     }
 
+
     // Define the text to overlay (latitude and longitude)
     final String watermarkText = 'Lat: $latitude, Long: $longitude';
+    final String titleText = title;
 
     //final int textColor = img.getColor(255, 0, 0, 255);
-
+    //final int textColor = img.getColor(255, 255, 255, 255);
     int x = image.width - 600;
     int y = image.height - 600;
     // Draw the watermark text (bottom-left corner)
