@@ -1,105 +1,165 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'dart:io';
-import 'setcontroller.dart'; // Assuming your controller file is imported like this
-
-class WriteScreen extends StatelessWidget {
-  final writeController controller = Get.put(writeController());
-
+import 'package:iclean/Newscreen/Camera/Test4/setcontroller.dart';
+class ImageapiScreen extends StatelessWidget {
+  final Imageapicontroller controller = Get.put(Imageapicontroller());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Capture Image with Lat/Long')),
-      body: Center(
-        child: Obx(() {
-          if (controller.isLoading.value) {
-            // Show the loading indicator when isLoading is true
-            return const CircularProgressIndicator();
-          }
-
-          // Main UI content
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: () async {
-                  await controller.pickImageWithLocation();
-                  if (controller.pickedImage.value != null) {
-                    // Open the popup dialog to display the image after capturing
-                    showDialog(
-                      context: context,
-                      builder: (_) {
-                        return Obx(() {
-                          return AlertDialog(
-                            title: const Text('Captured Image with Lat/Long'),
-                            content: IntrinsicHeight(
-                              // Use IntrinsicHeight to force layout constraints
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // Add padding or container to better format the lat/long area
-                                    Container(
-                                      padding: const EdgeInsets.all(10),
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey[200],
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Text(
-                                        controller.latLong.value,
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    // Constrain the image size to avoid layout issues
-                                    FittedBox(
-                                      // Wrap image in FittedBox to handle sizing
-                                      child: controller.pickedImage.value != null
-                                          ? Image.file(
-                                        controller.pickedImage.value!,
-                                        width: MediaQuery.of(context).size.width * 0.8,
-                                        height: 250, // Give the image a fixed height
-                                        fit: BoxFit.contain,
-                                      )
-                                          : const Text('No image selected'),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.of(context).pop(),
-                                child: const Text('Close'),
-                              ),
-                            ],
-                          );
-                        });
-                      },
-                    );
-                  }
-                },
-                child: const Text('Capture Image'),
-              ),
-              const SizedBox(height: 20),
-              Obx(() {
-                return controller.pickedImage.value != null
-                    ? Image.file(
-                  controller.pickedImage.value!,
-                  width: 200,
-                  height: 200,
-                  fit: BoxFit.contain,
-                )
-                    : const Text('No image selected');
-              }),
-            ],
-          );
-        }),
+      appBar: AppBar(
+        title: const Text(
+          'Kutta palayam',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.green,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
+      body: Obx(
+            () => Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+
+                  // Section to display the 'Before' image capture and upload
+                  _buildSectionWithUpload(context, 'Before', controller.beforeImage, controller),
+
+                  const SizedBox(height: 20),
+
+                  // Display upload progress (if any)
+                  if (controller.uploadProgress > 0.0)
+                    LinearProgressIndicator(value: controller.uploadProgress),
+
+                  const SizedBox(height: 30),
+                ],
+              ),
+            ),
+            if (controller.isLoading.value)
+              const Center(
+                child: CircularProgressIndicator(), // Loading spinner during capture/upload
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Widget for image capture and upload section
+  Widget _buildSectionWithUpload(BuildContext context, String section, Rx<File?> imageFile, Imageapicontroller controller) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          section,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 25),
+        Row(
+          children: [
+            // Camera Icon to open the camera and capture image
+            _buildImageSection(context, section.toLowerCase(), imageFile, controller),
+            const SizedBox(width: 40),
+            // Upload Icon to upload the captured image
+            IconButton(
+              icon: const Icon(Icons.upload_file, color: Colors.green),
+              onPressed: () {
+                if (controller.beforeImage.value != null) {
+                  String tankName = 'Tank001';
+                  String imei = '123456789012345';
+                  controller.uploadImage(controller.beforeImage.value!,tankName,imei); // Upload the captured image
+                } else {
+                  Get.snackbar("Error", "Please capture an image first");
+                }
+              },
+              iconSize: 30,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  // Widget to display the captured image or camera icon
+  Widget _buildImageSection(BuildContext context, String section, Rx<File?> imageFile, Imageapicontroller controller) {
+    return GestureDetector(
+      onTap: () {
+        controller.pickImageWithLocation(section); // Open camera
+      },
+      onLongPress: () {
+        if (imageFile.value != null) {
+          _showImageModal(context, imageFile.value!, controller); // Preview image in full screen
+        }
+      },
+
+      child: Container(
+        width: 150, // Adjust size accordingly
+        height: 150,
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.green),
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        child: imageFile.value == null
+            ? const Icon(
+          Icons.camera_alt, // Camera icon
+          size: 50,
+          color: Colors.green,
+        )
+            : ClipRRect(
+          borderRadius: BorderRadius.circular(8.0),
+          child: Image.file(
+            imageFile.value!,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return const Icon(
+                Icons.error,
+                color: Colors.red,
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Function to show full-screen preview of the image
+  void _showImageModal(BuildContext context, File image, Imageapicontroller controller) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          insetPadding: EdgeInsets.zero,
+          backgroundColor: Colors.black,
+          child: Stack(
+            children: [
+              Center(
+                child: Image.file(
+                  image,
+                  fit: BoxFit.contain,
+                ),
+              ),
+              Positioned(
+                top: 20,
+                right: 20,
+                child: IconButton(
+                  icon: const Icon(Icons.close, color: Colors.white, size: 30),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

@@ -2,10 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get_storage/get_storage.dart';
-import 'Newscreen/Camera/Operation/watermark.dart';
-import 'Newscreen/Camera/Test/capture.dart';
+import 'Newscreen/API/dio.dart';
 import 'Newscreen/Camera/Test4/set.dart';
-import 'Newscreen/Camera/camera.dart';
 void main() async{
   await GetStorage.init();
   runApp(const MyApp());
@@ -22,7 +20,7 @@ class MyApp extends StatelessWidget{
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: ImageCaptureScreen()
+      home: ImageapiScreen()
     );
   }
 }
