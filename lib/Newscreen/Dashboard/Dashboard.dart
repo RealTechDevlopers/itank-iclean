@@ -181,7 +181,7 @@ class CleaningCalendar extends StatelessWidget {
               child: const Text("Logout"),
               onPressed: () {
                 box.remove('isLoggedIn');
-                Get.offAll(LogScreen());
+                Get.offAll(LoginScreen());
               },
             ),
           ],

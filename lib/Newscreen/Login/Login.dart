@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'Logincontroller.dart';
-class LogScreen extends StatelessWidget {
+class LoginScreen extends StatelessWidget {
   final box = GetStorage();
   final LogController controller = Get.put(LogController());
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();

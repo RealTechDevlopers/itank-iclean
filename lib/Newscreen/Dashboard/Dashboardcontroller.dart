@@ -24,7 +24,7 @@ class TankController extends GetxController {
   }
   void logout() {
     box.remove('isLoggedIn');
-    Get.offAll(() => LogScreen());
+    Get.offAll(() => LoginScreen());
   }
   void NavigateTOreport(){
     Get.to(repo());

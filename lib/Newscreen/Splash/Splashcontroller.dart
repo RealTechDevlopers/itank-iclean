@@ -2,7 +2,6 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import '../Dashboard/Dashboard.dart';
 import '../Login/Login.dart';
-
 class FirstController extends GetxController {
   final box = GetStorage();
   @override
@@ -17,7 +16,7 @@ class FirstController extends GetxController {
     if (isLoggedIn) {
       Get.offAll(() => CleaningCalendar());
     } else {
-      Get.offAll(() => LogScreen());
+      Get.offAll(() => LoginScreen());
     }
   }
 }
