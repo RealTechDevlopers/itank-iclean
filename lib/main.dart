@@ -18,9 +18,10 @@ class MyApp extends StatelessWidget{
        // initialBinding: CaptureBinding(),
       debugShowCheckedModeBanner: false,  
       title: 'Flutter Demo',
-      initialRoute: '/SplashScreen',
+      initialRoute: '/CleaningCalendar',
       getPages: [
         GetPage(name: '/SplashScreen', page: () => Splash()),  // Splash screen as the first route
+        GetPage(name: '/CleaningCalendar', page: () => CleaningCalendar()),  // Splash screen as the first route
         GetPage(name: '/LogScreen', page: () => LoginScreen()),  // Login screen route
         GetPage(name: '/CleaningCalendar', page: () => CleaningCalendar()),  // Dashboard or next screen route
       ],

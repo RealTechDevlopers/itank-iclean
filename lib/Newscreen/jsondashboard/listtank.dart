@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'listtankcontroller.dart';
 
 class TankListScreen extends StatelessWidget {
-  final listtankController controller = Get.put(listtankController());
+  final ListTankController controller = Get.put(ListTankController());
 
   @override
   Widget build(BuildContext context) {
@@ -12,29 +12,25 @@ class TankListScreen extends StatelessWidget {
         title: Text("Tank List"),
       ),
       body: Obx(() {
+        // Display loading indicator when loading data
         if (controller.isLoading.value && controller.tankList.isEmpty) {
           return Center(child: CircularProgressIndicator());
         }
 
+        // Display error message if there’s an error
         if (controller.errorMessage.isNotEmpty) {
           return Center(child: Text(controller.errorMessage.value));
         }
 
+        // Show message if there’s no data to display
+        if (controller.tankList.isEmpty) {
+          return Center(child: Text("No data available"));
+        }
+
+        // Display the ListView when data is loaded
         return ListView.builder(
-          itemCount: controller.tankList.length + 1,
+          itemCount: controller.tankList.length,
           itemBuilder: (context, index) {
-            if (index == controller.tankList.length) {
-              if (controller.hasMoreData.value) {
-                return Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: CircularProgressIndicator(),
-                  ),
-                );
-              } else {
-                return Center(child: Text("No more data"));
-              }
-            }
             var tank = controller.tankList[index];
             return Card(
               elevation: 4,
