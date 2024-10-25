@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import '../Login/Login.dart';
+import '../jsondashboard/model.dart';
 import 'Dashboardcontroller.dart';
-import 'Model.dart';
 
 class CleaningCalendar extends StatelessWidget {
-  final TankController tankController = Get.put(TankController());
+  final String? username;  // Accept username as a parameter
+  final ListTankController tankController = Get.put(ListTankController());  // Initialize ListTankController
   final box = GetStorage();
+
+  // Constructor to accept the username
+  CleaningCalendar({Key? key, required this.username}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +20,7 @@ class CleaningCalendar extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'PKTR',
+          username != null ? '$username\'s Dashboard' : 'Dashboard',
           style: TextStyle(
             color: Colors.white,
             fontSize: screenWidth * 0.055,
@@ -35,7 +39,7 @@ class CleaningCalendar extends StatelessWidget {
                 color: Colors.green,
               ),
               child: Text(
-                'PKTR Menu',
+                username != null ? '$username\'s Menu' : 'Menu',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: screenWidth * 0.06,
@@ -59,6 +63,17 @@ class CleaningCalendar extends StatelessWidget {
       body: Padding(
         padding: EdgeInsets.all(screenWidth * 0.04),
         child: Obx(() {
+          // Show loading indicator when data is being fetched
+          if (tankController.isLoading.value) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          // Show error message if there was an error fetching data
+          if (tankController.errorMessage.isNotEmpty) {
+            return Center(child: Text(tankController.errorMessage.value));
+          }
+
+          // Display the tank list once data is available
           return ListView.builder(
             itemCount: tankController.tankList.length,
             itemBuilder: (context, index) {
@@ -71,15 +86,12 @@ class CleaningCalendar extends StatelessWidget {
     );
   }
 
-  Widget _buildTankCard(TankStatus tank, double screenWidth) {
-    Color dueDaysColor;
-    if (tank.dueDays > 3) {
-      dueDaysColor = Colors.green;
-    } else if (tank.dueDays >= 1) {
-      dueDaysColor = Colors.orange;
-    } else {
-      dueDaysColor = Colors.red;
-    }
+  Widget _buildTankCard(Tank tank, double screenWidth) {
+    Color dueDaysColor = (tank.daysCountAfterClean ?? 0) > 3
+        ? Colors.green
+        : (tank.daysCountAfterClean ?? 0) >= 1
+        ? Colors.orange
+        : Colors.red;
 
     return Card(
       elevation: 5,
@@ -90,12 +102,14 @@ class CleaningCalendar extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Tank Icon on the left
             CircleAvatar(
               radius: screenWidth * 0.08,
               backgroundColor: Colors.greenAccent.shade700,
               backgroundImage: AssetImage('assets/Images/personclean.png'),
             ),
             SizedBox(width: screenWidth * 0.04),
+            // Tank Information in the middle
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,7 +133,7 @@ class CleaningCalendar extends StatelessWidget {
                         radius: screenWidth * 0.035,
                         backgroundColor: dueDaysColor,
                         child: Text(
-                          tank.dueDays.toString(),
+                          (tank.daysCountAfterClean ?? 0).toString(),
                           style: TextStyle(color: Colors.white, fontSize: screenWidth * 0.03),
                         ),
                       ),
@@ -128,32 +142,16 @@ class CleaningCalendar extends StatelessWidget {
                 ],
               ),
             ),
+            // Status Icons stacked vertically on the right side
             Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: tank.status.map((status) {
-                // Determine icon and color based on status data availability
-                bool hasData = (status == "Before" || status == "During" || status == "After");
-                Color iconColor = hasData ? Colors.green : Colors.red;
-                IconData iconData = hasData ? Icons.check_circle : Icons.cancel;
-
-                return Padding(
-                  padding: EdgeInsets.symmetric(vertical: screenWidth * 0.005),
-                  child: Row(
-                    children: [
-                      Icon(
-                        iconData,
-                        color: iconColor,
-                        size: screenWidth * 0.06,
-                      ),
-                      SizedBox(width: screenWidth * 0.01),
-                      Text(
-                        status,
-                        style: TextStyle(fontSize: screenWidth * 0.032, color: Colors.black87),
-                      ),
-                    ],
-                  ),
-                );
-              }).toList(),
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildStatusIcon(screenWidth, "Before", tank.beforeImg),
+                SizedBox(height: screenWidth * 0.02),
+                _buildStatusIcon(screenWidth, "During", tank.duringImg),
+                SizedBox(height: screenWidth * 0.02),
+                _buildStatusIcon(screenWidth, "After", tank.afterImg),
+              ],
             ),
           ],
         ),
@@ -161,6 +159,30 @@ class CleaningCalendar extends StatelessWidget {
     );
   }
 
+
+  // Helper function to create status icons for Before, During, After based on image availability
+  Widget _buildStatusIcon(double screenWidth, String status, String imgPath) {
+    bool hasData = imgPath.isNotEmpty;  // Check if the image path exists
+    Color iconColor = hasData ? Colors.green : Colors.red;
+    IconData iconData = hasData ? Icons.check_circle : Icons.cancel;
+
+    return Row(
+      children: [
+        Icon(
+          iconData,
+          color: iconColor,
+          size: screenWidth * 0.06,
+        ),
+        SizedBox(width: screenWidth * 0.01),
+        Text(
+          status,
+          style: TextStyle(fontSize: screenWidth * 0.032, color: Colors.black87),
+        ),
+      ],
+    );
+  }
+
+  // Logout dialog function
   void _showLogoutDialog(BuildContext context, GetStorage box) {
     showDialog(
       context: context,
@@ -185,6 +207,7 @@ class CleaningCalendar extends StatelessWidget {
               child: Text("Logout", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.04)),
               onPressed: () {
                 box.remove('isLoggedIn');
+                box.remove('username');
                 Get.offAll(LoginScreen());
               },
             ),

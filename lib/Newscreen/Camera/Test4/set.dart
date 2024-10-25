@@ -27,7 +27,7 @@ class ImageapiScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
 
                   // Section to display the 'Before' image capture and upload

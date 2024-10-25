@@ -9,7 +9,7 @@ class LogController extends GetxController {
   var username = ''.obs;
   var password = ''.obs;
   var isPasswordVisible = false.obs;
-  final box = GetStorage();
+  final box = GetStorage(); // Initialize GetStorage
   RxBool isLoading = false.obs;
   RxString errorMessage = "".obs;
 
@@ -18,7 +18,6 @@ class LogController extends GetxController {
   }
 
   Future<void> login() async {
-    print('Login Called');
     if (username.isEmpty || password.isEmpty) {
       errorMessage.value = 'Please enter both username and password';
       return;
@@ -32,31 +31,32 @@ class LogController extends GetxController {
       'password': password.value,
     };
 
-    print("Login Data: $data");
-
     final url = Uri.parse('http://devftp.itank.io/water/iNeer/api/icleanApi/loginValidation.php');
 
     try {
       final response = await http.post(url, body: data);
 
-      print("API Response: ${response.body}");
-
       if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body); // Assuming the response is in JSON format
+        final responseData = jsonDecode(response.body);
 
         if (responseData['status'] == 'success') {
+          // Store the username and login status in local storage
+          box.write('isLoggedIn', true);
+          box.write('username', username.value); // Store the logged-in user's name
+
           Get.snackbar(
             'Login Success',
-            'Welcome back!',
+            'Welcome back, ${username.value}!',
             colorText: Colors.white,
             snackPosition: SnackPosition.BOTTOM,
             backgroundColor: Colors.green,
             duration: const Duration(seconds: 1),
           );
 
-          // Ensure the route name here matches the one in your route setup
-          Get.toNamed('/CleaningCalendar');
+          // Navigate to Home Screen
+          Get.offAllNamed('/CleaningCalendar');
         } else {
+          errorMessage.value = responseData['message'] ?? 'Login failed';
           Get.snackbar(
             'Invalid',
             'Enter correct username and password',
@@ -65,14 +65,12 @@ class LogController extends GetxController {
             backgroundColor: Colors.red,
             duration: const Duration(seconds: 1),
           );
-          errorMessage.value = responseData['message'] ?? 'Login failed';
         }
       } else {
         errorMessage.value = 'Server error: ${response.statusCode}';
       }
     } catch (e) {
       errorMessage.value = 'Error connecting to the server';
-      print('Error: $e');
     } finally {
       isLoading.value = false;
     }

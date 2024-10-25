@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:get_storage/get_storage.dart';
+import 'Newscreen/Camera/Test4/set.dart';
 import 'Newscreen/Dashboard/Dashboard.dart';
 import 'Newscreen/Login/Login.dart';
 import 'Newscreen/Splash/splash.dart';
@@ -18,12 +19,13 @@ class MyApp extends StatelessWidget{
        // initialBinding: CaptureBinding(),
       debugShowCheckedModeBanner: false,  
       title: 'Flutter Demo',
-      initialRoute: '/CleaningCalendar',
+      initialRoute: '/ImageapiScreen',
       getPages: [
         GetPage(name: '/SplashScreen', page: () => Splash()),  // Splash screen as the first route
-        GetPage(name: '/CleaningCalendar', page: () => CleaningCalendar()),  // Splash screen as the first route
+        GetPage(name: '/CleaningCalendar', page: () => CleaningCalendar(username: '',)),  // Splash screen as the first route
         GetPage(name: '/LogScreen', page: () => LoginScreen()),  // Login screen route
-        GetPage(name: '/CleaningCalendar', page: () => CleaningCalendar()),  // Dashboard or next screen route
+        GetPage(name: '/ImageapiScreen', page: () => ImageapiScreen()),  // Login screen route
+      //  GetPage(name: '/CleaningCalendar', page: () => CleaningCalendar(username: '',)),  // Dashboard or next screen route
       ],
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),

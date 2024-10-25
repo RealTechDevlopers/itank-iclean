@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'listtankcontroller.dart';
+import '../Dashboard/Dashboardcontroller.dart';
+
 
 class TankListScreen extends StatelessWidget {
   final ListTankController controller = Get.put(ListTankController());
