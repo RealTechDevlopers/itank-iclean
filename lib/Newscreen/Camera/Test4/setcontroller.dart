@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile, Response;
@@ -217,13 +218,13 @@ class Imageapicontroller extends GetxController {
 
       if (response.statusCode == 200) {
         tankController.fetchTanks();
-        Get.snackbar("Success", "Image uploaded successfully",duration: const Duration(seconds: 1));
+        Get.snackbar("Success", "Image uploaded successfully",duration: const Duration(seconds: 1),backgroundColor:Colors.green,colorText: Colors.white);
       } else {
-        Get.snackbar("Error", "Failed to upload image",duration: const Duration(seconds: 1));
+        Get.snackbar("Error", "Failed to upload image",duration: const Duration(seconds: 1),backgroundColor:Colors.red,colorText: Colors.white);
       }
     } catch (e) {
       log('Error uploading image: $e');
-      Get.snackbar("Error", "Failed to upload image: $e",duration: const Duration(seconds: 1));
+      Get.snackbar("Error", "Failed to upload image: $e",duration: const Duration(seconds: 1),colorText: Colors.white);
     } finally {
       isLoading.value = false;
     }

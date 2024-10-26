@@ -30,74 +30,90 @@ class ImageapiScreen extends StatelessWidget {
         ),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: Obx(
-            () => Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  _buildSectionWithUpload(context, 'Before', controller.beforeImage, controller, tank),
-                  const SizedBox(height: 100),
-                  controller.beforeImage.value != null || tank.beforeImg != ""
-                      ? _buildSectionWithUpload(context, 'During', controller.duringImage, controller, tank)
-                      : _buildNoImage(context, 'During'),
-                  const SizedBox(height: 100),
-                  controller.duringImage.value != null || tank.duringImg != ""
-                      ? _buildSectionWithUpload(context, 'After', controller.afterImage, controller, tank)
-                      : _buildNoImage(context, 'After'),
-                  const SizedBox(height: 30),
-                  if (controller.uploadProgress > 0.0)
-                    LinearProgressIndicator(value: controller.uploadProgress),
-                ],
-              ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final screenWidth = constraints.maxWidth;
+          final screenHeight = constraints.maxHeight;
+
+          return Obx(
+                () => Stack(
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(screenWidth * 0.04),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      _buildSectionWithUpload(context, 'Before', controller.beforeImage, controller, tank, screenWidth),
+                      SizedBox(height: screenHeight * 0.05),
+                      controller.beforeImage.value != null || tank.beforeImg != ""
+                          ? _buildSectionWithUpload(context, 'During', controller.duringImage, controller, tank, screenWidth)
+                          : _buildNoImage(context, 'During', screenWidth, screenHeight),
+                      SizedBox(height: screenHeight * 0.05),
+                      controller.duringImage.value != null || tank.duringImg != ""
+                          ? _buildSectionWithUpload(context, 'After', controller.afterImage, controller, tank, screenWidth)
+                          : _buildNoImage(context, 'After', screenWidth, screenHeight),
+                      SizedBox(height: screenHeight * 0.04),
+                      if (controller.uploadProgress > 0.0)
+                        LinearProgressIndicator(value: controller.uploadProgress),
+                    ],
+                  ),
+                ),
+                if (controller.isLoading.value)
+                  const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+              ],
             ),
-            if (controller.isLoading.value)
-              const Center(
-                child: CircularProgressIndicator(),
-              ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildSectionWithUpload(
-      BuildContext context, String section, Rx<File?> imageFile, Imageapicontroller controller, Tank tank) {
+  Widget _buildSectionWithUpload(BuildContext context, String section, Rx<File?> imageFile, Imageapicontroller controller, Tank tank, double screenWidth) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           section,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: screenWidth * 0.045, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 15),
+        SizedBox(height: screenWidth * 0.03),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _buildImageSection(context, section.toLowerCase(), imageFile, controller, tank),
-            const SizedBox(width: 10),
+            _buildImageSection(context, section.toLowerCase(), imageFile, controller, tank, screenWidth),
+            SizedBox(width: screenWidth * 0.02),
             Expanded(
-              child: IconButton(
-                icon: const Icon(Icons.upload_file, color: Colors.green),
-                onPressed: () {
-                  if (imageFile.value != null) {
-                    String tankType = "";
-                    if (section == "Before") {
-                      tankType = "beforeImg";
-                    } else if (section == "During") {
-                      tankType = "duringImg";
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.green.withOpacity(0.1), // Set a light background color
+                  borderRadius: BorderRadius.circular(8.0), // Rounded corners
+                ),
+                padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                child: TextButton.icon(
+                  onPressed: () {
+                    if (imageFile.value != null) {
+                      String tankType = section == "Before" ? "beforeImg" : section == "During" ? "duringImg" : "afterImg";
+                      log("Selection : $section");
+                      controller.uploadImage(imageFile.value!, tankName, tankType, tank);
                     } else {
-                      tankType = "afterImg";
+                      Get.snackbar("Error", "Please capture an image first", duration: const Duration(seconds: 1));
                     }
-                    log("Selection : $section");
-                    controller.uploadImage(imageFile.value!, tankName, tankType, tank);
-                  } else {
-                    Get.snackbar("Error", "Please capture an image first", duration: const Duration(seconds: 1));
-                  }
-                },
-                iconSize: 30,
+                  },
+                  icon: Icon(
+                    Icons.upload_file,
+                    color: Colors.green,
+                    size: screenWidth * 0.08,
+                  ),
+                  label: Text(
+                    'Upload',
+                    style: TextStyle(
+                      color: Colors.green,
+                      fontSize: screenWidth * 0.035,
+                    ),
+                  ),
+                ),
               ),
             ),
           ],
@@ -106,11 +122,12 @@ class ImageapiScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildImageSection(
-      BuildContext context, String section, Rx<File?> imageFile, Imageapicontroller controller, Tank tank) {
+
+
+
+  Widget _buildImageSection(BuildContext context, String section, Rx<File?> imageFile, Imageapicontroller controller, Tank tank, double screenWidth) {
     String imgUrl = "";
     bool useNetworkImage = false;
-
     if (section == "before" && tank.beforeImg != "") {
       imgUrl = jsonDecode(tank.beforeImg)['url'];
       useNetworkImage = true;
@@ -134,11 +151,11 @@ class ImageapiScreen extends StatelessWidget {
         }
       },
       child: Container(
-        width: 150,
-        height: 150,
+        width: screenWidth * 0.4,
+        height: screenWidth * 0.4,
         decoration: BoxDecoration(
           border: Border.all(color: Colors.green),
-          borderRadius: BorderRadius.circular(8.0),
+          borderRadius: BorderRadius.circular(10.0),
         ),
         child: useNetworkImage
             ? Image.network(
@@ -150,9 +167,9 @@ class ImageapiScreen extends StatelessWidget {
           ),
         )
             : imageFile.value == null
-            ? const Icon(
+            ? Icon(
           Icons.camera_alt,
-          size: 50,
+          size: screenWidth * 0.15,
           color: Colors.green,
         )
             : ClipRRect(
@@ -170,36 +187,55 @@ class ImageapiScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildNoImage(BuildContext context, String section) {
+  Widget _buildNoImage(BuildContext context, String section, double screenWidth, double screenHeight) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           section,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: screenWidth * 0.045, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 15),
+        SizedBox(height: screenWidth * 0.03),
         Row(
           children: [
             Container(
-              width: 150,
-              height: 150,
+              width: screenWidth * 0.4,
+              height: screenWidth * 0.4,
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey),
                 borderRadius: BorderRadius.circular(8.0),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.camera_alt,
-                size: 50,
+                size: screenWidth * 0.15,
                 color: Colors.grey,
               ),
             ),
-            const SizedBox(width: 10),
+            SizedBox(width: screenWidth * 0.02),
             Expanded(
-              child: IconButton(
-                icon: const Icon(Icons.upload_file, color: Colors.grey),
-                onPressed: null,
-                iconSize: 30,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey.withOpacity(0.1), // Set a light background color
+                  borderRadius: BorderRadius.circular(8.0), // Rounded corners
+                ),
+                padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                child: TextButton.icon(
+                  onPressed: () {
+
+                  },
+                  icon: Icon(
+                    Icons.upload_file,
+                    color: Colors.grey,
+                    size: screenWidth * 0.08,
+                  ),
+                  label: Text(
+                    'Upload',
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: screenWidth * 0.035,
+                    ),
+                  ),
+                ),
               ),
             ),
           ],

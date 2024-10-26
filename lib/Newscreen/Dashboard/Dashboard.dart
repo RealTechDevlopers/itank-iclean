@@ -20,7 +20,7 @@ class CleaningCalendar extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          username != null ? '$username\'s Dashboard' : 'Dashboard',
+          username != null ? '$username\ Dashboard' : 'Dashboard',
           style: TextStyle(
             color: Colors.white,
             fontSize: screenWidth * 0.055,
@@ -42,7 +42,7 @@ class CleaningCalendar extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    username != null ? '$username\'s Menu' : "",
+                    username != null ? '$username\ Menu' : "",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: screenWidth * 0.06,
