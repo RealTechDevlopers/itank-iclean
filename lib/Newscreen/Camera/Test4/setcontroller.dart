@@ -8,20 +8,27 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:image/image.dart' as img;
+import '../../global/Globalvar.dart';
+import '../../jsondashboard/model.dart';
 
 class Imageapicontroller extends GetxController {
   Rx<File?> beforeImage = Rx<File?>(null);
+  Rx<File?> duringImage = Rx<File?>(null);
+  Rx<File?> afterImage = Rx<File?>(null);
+  RxBool isBeforeLoading = false.obs;  // For "Before" loader
+  RxBool isDuringLoading = false.obs;  // For "During" loader
+  RxBool isAfterLoading = false.obs;   // For "After" loader
+
   var uploadProgress = 0.0;
   RxString latLong = ''.obs;
-  RxBool isLoading = false.obs;
+  RxBool isLoading = false.obs; // Used for loading spinner
   final ImagePicker _picker = ImagePicker();
 
   // Function to pick image from camera with location and watermark
   Future<void> pickImageWithLocation(String section) async {
     try {
-      isLoading.value = true;
+      isLoading.value = true; // Start loading
 
-      // Check location permissions
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         latLong.value = "Location services are disabled.";
@@ -45,13 +52,11 @@ class Imageapicontroller extends GetxController {
         return;
       }
 
-      // Pick image from camera
       final XFile? pickedFile = await _picker.pickImage(source: ImageSource.camera);
       if (pickedFile != null) {
         final File imageFile = File(pickedFile.path);
-        beforeImage.value = imageFile; // Assign image to 'before' section
+        beforeImage.value = imageFile;
 
-        // Get the current location
         final position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
         latLong.value = 'Lat: ${position.latitude}, Long: ${position.longitude}';
 
@@ -64,37 +69,40 @@ class Imageapicontroller extends GetxController {
         final String formattedDate = DateFormat('dd-MM-yyyy').format(now);
         final String formattedTime = DateFormat('HH:mm:ss').format(now);
 
-        // Add watermark with location and title
-        await _addWatermarkWithLocation(imageFile, position.latitude, position.longitude, section, "My Custom Title", formattedDate, formattedTime, address);
+        await _addWatermarkWithLocation(
+            imageFile, position.latitude, position.longitude, section, "My Custom Title", formattedDate, formattedTime, address);
       } else {
         latLong.value = "No image selected";
       }
     } catch (e) {
       latLong.value = "Error: $e";
     } finally {
-      isLoading.value = false;
+      isLoading.value = false; // Stop loading
     }
   }
 
-  // Compress image before uploading
   Future<File> compressImage(File imageFile, {int quality = 85, int maxWidth = 800, int maxHeight = 800}) async {
-    // Read the image file as bytes
     final img.Image? originalImage = img.decodeImage(imageFile.readAsBytesSync());
-
-    // Resize the image to maxWidth/maxHeight while maintaining the aspect ratio
     final img.Image resizedImage = img.copyResize(originalImage!, width: maxWidth);
 
-    // Get temporary directory to save compressed image
     final Directory tempDir = await getTemporaryDirectory();
     final String targetPath = '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
 
-    // Compress and encode to JPEG with the specified quality
     final File compressedImage = File(targetPath)..writeAsBytesSync(img.encodeJpg(resizedImage, quality: quality));
 
-    return compressedImage; // Return the compressed image file
+    return compressedImage;
   }
 
-  Future<void> _addWatermarkWithLocation(File originalImage, double latitude, double longitude, String section, String title, String date, String time, String address) async {
+  Future<void> _addWatermarkWithLocation(
+      File originalImage,
+      double latitude,
+      double longitude,
+      String section,
+      String title,
+      String date,
+      String time,
+      String address) async {
+
     final img.Image? image = img.decodeImage(await originalImage.readAsBytes());
     if (image == null) return;
 
@@ -103,78 +111,121 @@ class Imageapicontroller extends GetxController {
     final String timeText = 'Time: $time';
     final String addressText = 'Address: $address';
 
-    int x = image.width - 2950;
-    int y = image.height - 300;
-    int yDate = image.height - 450;
-    int yTime = image.height - 375;
-    int yAddress = image.height - 225;
+    // Dynamically calculate positions based on image dimensions
+    int padding = (image.width * 0.05).toInt();
+    int textHeight = (image.height * 0.04).toInt();
+    int xPosition = padding;
+    int yPositionWatermark = image.height - padding - textHeight * 3;
+    int yPositionDate = yPositionWatermark + textHeight;
+    int yPositionTime = yPositionDate + textHeight;
+    int yPositionAddress = yPositionTime + textHeight;
 
-    img.fillRect(image, x1: image.width - 3000, y1: image.height - 500, x2: image.width - 60, y2: image.height - 150, color: img.ColorRgba8(0, 0, 0, 150));
-    img.drawString(image,font: img.arial48, x:x, y:y, watermarkText);
-    img.drawString(image, font:img.arial48, x:x, y:yDate, dateText);
-    img.drawString(image, font:img.arial48, x:x, y:yTime, timeText);
-    img.drawString(image, font:img.arial48, x:x, y:yAddress, addressText);
+    // Overlay background for text readability
+    img.fillRect(image,
+        x1: xPosition - padding ~/ 2,
+        y1: yPositionWatermark - padding ~/ 2,
+        x2: image.width - padding,
+        y2: image.height - padding ~/ 4,
+        color: img.ColorRgba8(0, 0, 0, 150));
+
+    // Draw watermark text dynamically
+    img.drawString(image,
+        font: img.arial48,
+        x: xPosition,
+        y: yPositionWatermark,
+        watermarkText);
+    img.drawString(image,
+        font: img.arial48,
+        x: xPosition,
+        y: yPositionDate,
+        dateText);
+    img.drawString(image,
+        font: img.arial48,
+        x: xPosition,
+        y: yPositionTime,
+        timeText);
+    img.drawString(image,
+        font: img.arial48,
+        x: xPosition,
+        y: yPositionAddress,
+        addressText);
 
     final directory = await getApplicationDocumentsDirectory();
     final newImagePath = '${directory.path}/image_with_watermark_$section.png';
     File(newImagePath).writeAsBytesSync(img.encodePng(image));
-    beforeImage.value = File(newImagePath); // Update image with watermark
+
+    // Assign the watermarked image to the correct observable based on the section
+    if (section.toLowerCase() == 'before') {
+      beforeImage.value = File(newImagePath);
+    } else if (section.toLowerCase() == 'during') {
+      duringImage.value = File(newImagePath);
+    } else if (section.toLowerCase() == 'after') {
+      afterImage.value = File(newImagePath);
+    }
   }
 
-  Future<void> uploadImage(File selectedImage,String tankName,String imei) async {
+  Future<void> uploadImage(File selectedImage, String tankName, String section, Tank tank) async {
     if (selectedImage == null) {
       Get.snackbar("Warning", "Please capture the image first", duration: Duration(seconds: 1));
       return;
     }
 
     try {
-      isLoading.value = true;
+      isLoading.value = true; // Start loading
       Dio dio = Dio();
 
-      // Compress the image before uploading
       File compressedImage = await compressImage(selectedImage, quality: 80, maxWidth: 800);
 
       String fileName = compressedImage.path.split('/').last;
 
-      // Prepare FormData for image upload
       FormData formData = FormData.fromMap({
+        'action':section,
         'image': await MultipartFile.fromFile(compressedImage.path, filename: fileName),
+        'date':DateTime.now(),
+        'latlong':latLong.string,
+        'name': tank.name,
+        'imei': tank.imei,
         'tank_name': tankName,
-        'imei': imei,
+        'updatedBy':tank.username,
+        'id':tank.id
       });
+    //   action:beforImg
+    //   date:2024-10-25 11:58:36
+    // latlong:12.45879,25.12345
+    // imei:1234567891234
+    // tankname:Puttankattur
+    // updatedBy:user
+    // id:17
 
       log("Uploading image: $fileName");
       log("FormData fields: ${formData.fields}");
       log("FormData files: ${formData.files}");
 
-      // Replace with your actual API endpoint
-      String apiUrl = 'http://devftp.itank.io/water/iNeer\api\iclean.php';
+      String apiUrl = 'http://devftp.itank.io/water/iNeer/api/icleanApi/iclean_imgUpload.php';
 
-      // Send POST request to upload image
       Response response = await dio.post(
         apiUrl,
         data: formData,
         options: Options(
-          contentType: 'multipart/form-data', // Set content type
+          contentType: 'multipart/form-data',
         ),
         onSendProgress: (int sent, int total) {
-          double progress = (sent / total) * 100; // Calculate progress percentage
-          log("Upload progress: $progress%"); // Log upload progress
+          double progress = (sent / total) * 100;
+          log("Upload progress: $progress%");
         },
       );
 
-      // Handle the response
       if (response.statusCode == 200) {
-        Get.snackbar("Success", "Image uploaded successfully");
+        tankController.fetchTanks();
+        Get.snackbar("Success", "Image uploaded successfully",duration: const Duration(seconds: 1));
       } else {
-        Get.snackbar("Error", "Failed to upload image");
+        Get.snackbar("Error", "Failed to upload image",duration: const Duration(seconds: 1));
       }
     } catch (e) {
-      // Handle errors
       log('Error uploading image: $e');
-      Get.snackbar("Error", "Failed to upload image: $e");
+      Get.snackbar("Error", "Failed to upload image: $e",duration: const Duration(seconds: 1));
     } finally {
-      isLoading.value = false;  // Hide loading spinner
+      isLoading.value = false;
     }
   }
 }

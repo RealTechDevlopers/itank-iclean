@@ -54,7 +54,8 @@ class LogController extends GetxController {
           );
 
           // Navigate to Home Screen
-          Get.offAllNamed('/CleaningCalendar');
+          //Get.offAllNamed('/CleaningCalendar');
+          Get.offAll(() => CleaningCalendar(username: username.value));
         } else {
           errorMessage.value = responseData['message'] ?? 'Login failed';
           Get.snackbar(

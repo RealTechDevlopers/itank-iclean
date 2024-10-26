@@ -45,6 +45,7 @@ class Tank {
   String updatedAt;
   int? daysCountAfterClean;
   String tankLatlong;
+  String id;
 
   Tank({
     required this.name,
@@ -65,6 +66,7 @@ class Tank {
     required this.updatedAt,
     this.daysCountAfterClean,
     required this.tankLatlong,
+    required this.id,
   });
 
   factory Tank.fromJson(Map<String, dynamic> json) {
@@ -87,6 +89,7 @@ class Tank {
       updatedAt: json['updatedAt'] ?? "",
       daysCountAfterClean: json['daysCountAfterClean'],
       tankLatlong: json['tank_latlong'] ?? "",
+      id: json['id'] ?? "",
     );
   }
 
