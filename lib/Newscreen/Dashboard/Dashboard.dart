@@ -5,7 +5,6 @@ import '../Camera/Test4/set.dart';
 import '../Login/Login.dart';
 import '../jsondashboard/model.dart';
 import 'Dashboardcontroller.dart';
-
 class CleaningCalendar extends StatelessWidget {
   final String? username;
   final ListTankController tankController = Get.put(ListTankController());
@@ -35,7 +34,7 @@ class CleaningCalendar extends StatelessWidget {
           padding: EdgeInsets.zero,
           children: [
             DrawerHeader(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.green,
               ),
               child: Column(
@@ -56,13 +55,13 @@ class CleaningCalendar extends StatelessWidget {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Panchayat: ${firstTank.panchayatName}', style: TextStyle(color: Colors.white)),
-                          Text('Union: ${firstTank.unionName}', style: TextStyle(color: Colors.white)),
-                          Text('Tank Capacity: ${firstTank.capacity} Liters', style: TextStyle(color: Colors.white)),
+                          Text('Panchayat: ${firstTank.panchayatName}', style: const TextStyle(color: Colors.white)),
+                          Text('Union: ${firstTank.unionName}', style: const TextStyle(color: Colors.white)),
+                          Text('Tank Capacity: ${firstTank.capacity} Liters', style: const TextStyle(color: Colors.white)),
                         ],
                       );
                     } else {
-                      return Text('No tank data available', style: TextStyle(color: Colors.white));
+                      return const Text('No tank data available', style: TextStyle(color: Colors.white));
                     }
                   }),
                 ],
@@ -101,7 +100,7 @@ class CleaningCalendar extends StatelessWidget {
                 ),
               ],
             ),
-            Divider(),
+            const Divider(),
             ListTile(
               leading: Icon(Icons.logout, color: Colors.green, size: screenWidth * 0.06),
               title: Text(
@@ -123,7 +122,7 @@ class CleaningCalendar extends StatelessWidget {
           },
           child: Obx(() {
             if (tankController.isLoading.value) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             }
 
             if (tankController.errorMessage.isNotEmpty) {
@@ -142,7 +141,6 @@ class CleaningCalendar extends StatelessWidget {
       ),
     );
   }
-
   Widget _buildTankCard(Tank tank, double screenWidth) {
     Color dueDaysColor = (tank.daysCountAfterClean ?? 0) > 3
         ? Colors.green
@@ -166,7 +164,7 @@ class CleaningCalendar extends StatelessWidget {
               CircleAvatar(
                 radius: screenWidth * 0.08,
                 backgroundColor: Colors.greenAccent.shade700,
-                backgroundImage: AssetImage('assets/Images/personclean.png'),
+                backgroundImage: const AssetImage('assets/Images/personclean.png'),
               ),
               SizedBox(width: screenWidth * 0.04),
               Expanded(
@@ -217,12 +215,10 @@ class CleaningCalendar extends StatelessWidget {
       ),
     );
   }
-
   Widget _buildStatusIcon(double screenWidth, String status, String imgPath) {
     bool hasData = imgPath.isNotEmpty;
     Color iconColor = hasData ? Colors.green : Colors.red;
     IconData iconData = hasData ? Icons.check_circle : Icons.cancel;
-
     return Row(
       children: [
         Icon(
@@ -238,7 +234,6 @@ class CleaningCalendar extends StatelessWidget {
       ],
     );
   }
-
   void _showLogoutDialog(BuildContext context, GetStorage box) {
     showDialog(
       context: context,

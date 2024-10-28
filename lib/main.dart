@@ -8,25 +8,58 @@ import 'Newscreen/Camera/Test4/set.dart';
 import 'Newscreen/Dashboard/Dashboard.dart';
 import 'Newscreen/Login/Login.dart';
 import 'Newscreen/Splash/splash.dart';
-void main() async{
+
+void main() async {
   await GetStorage.init();
   runApp(const MyApp());
 }
-class MyApp extends StatelessWidget{
+
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return GetMaterialApp(
-       // initialBinding: CaptureBinding(),
-      debugShowCheckedModeBanner: false,  
+      // initialBinding: CaptureBinding(),
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       initialRoute: '/SplashScreen',
       getPages: [
-        GetPage(name: '/SplashScreen', page: () => Splash()),  // Splash screen as the first route
-        GetPage(name: '/CleaningCalendar', page: () => CleaningCalendar(username: '',)),  // Splash screen as the first route
-        GetPage(name: '/LogScreen', page: () => LoginScreen()),  // Login screen route
-        GetPage(name: '/ImageapiScreen', page: () => ImageapiScreen(tankName: '',tank: Tank(name: "", imei: "", devicename: "", categoryType: "", percentage: "", unionName: "", panchayatName: "", type: "", capacity: "", username: '', tankNumberImages: '', tankNumber: '', beforeImg: '', duringImg: '', afterImg: '', updatedAt: '', tankLatlong: '',id: ''),)),  // Login screen route
-      //  GetPage(name: '/CleaningCalendar', page: () => CleaningCalendar(username: '',)),  // Dashboard or next screen route
+        GetPage(
+            name: '/SplashScreen',
+            page: () => Splash()), // Splash screen as the first route
+        GetPage(
+            name: '/CleaningCalendar',
+            page: () => CleaningCalendar(
+                  username: '',
+                )), // Splash screen as the first route
+        GetPage(
+            name: '/LogScreen',
+            page: () => LoginScreen()), // Login screen route
+        GetPage(
+            name: '/ImageapiScreen',
+            page: () => ImageapiScreen(
+                  tankName: '',
+                  tank: Tank(
+                      name: "",
+                      imei: "",
+                      devicename: "",
+                      categoryType: "",
+                      percentage: "",
+                      unionName: "",
+                      panchayatName: "",
+                      type: "",
+                      capacity: "",
+                      username: '',
+                      tankNumberImages: '',
+                      tankNumber: '',
+                      beforeImg: '',
+                      duringImg: '',
+                      afterImg: '',
+                      updatedAt: '',
+                      tankLatlong: '',
+                      id: ''),
+                )), // Login screen route
+        //  GetPage(name: '/CleaningCalendar', page: () => CleaningCalendar(username: '',)),  // Dashboard or next screen route
       ],
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
