@@ -8,6 +8,7 @@ import 'Newscreen/Camera/Test4/set.dart';
 import 'Newscreen/Dashboard/Dashboard.dart';
 import 'Newscreen/Login/Login.dart';
 import 'Newscreen/Splash/splash.dart';
+import 'Newscreen/Tamildashboard/tamildashboard.dart';
 
 void main() async {
   await GetStorage.init();
@@ -22,11 +23,14 @@ class MyApp extends StatelessWidget {
       // initialBinding: CaptureBinding(),
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      initialRoute: '/SplashScreen',
+      initialRoute: '/DashboardScreen',
       getPages: [
         GetPage(
             name: '/SplashScreen',
-            page: () => Splash()), // Splash screen as the first route
+            page: () => Splash()),
+        GetPage(
+            name: '/DashboardScreen',
+            page: () => DashboardScreen()), // Splash screen as the first route
         GetPage(
             name: '/CleaningCalendar',
             page: () => CleaningCalendar(
