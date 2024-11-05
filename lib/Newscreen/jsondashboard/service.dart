@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'model.dart';
 
 class TankService {
-  final String apiUrl = 'http://devftp.itank.io/water/iNeer/api/icleanApi/iclean_tankList.php';
+  final String apiUrl = 'http://devftp.itank.io/water/ineer/api/icleanApi/iclean_tankList.php';
 
   // Ensure this is not static
   Future<TankDataResponse?> fetchTanks(String username) async {

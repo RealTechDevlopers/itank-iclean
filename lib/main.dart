@@ -9,25 +9,41 @@ import 'Newscreen/Dashboard/Dashboard.dart';
 import 'Newscreen/Login/Login.dart';
 import 'Newscreen/Splash/splash.dart';
 import 'Newscreen/Tamildashboard/tamildashboard.dart';
-
+import 'Newscreen/local/local.dart';
+import 'Newscreen/local/localUI.dart';
+import 'languagechange/Splash/splashUI.dart';
 void main() async {
   await GetStorage.init();
   runApp(const MyApp());
 }
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      translations: AppTranslations(),
+      locale: Locale('en', 'US'),       // Initial locale
+      fallbackLocale: Locale('ta', 'US'), // Fallback locale
       // initialBinding: CaptureBinding(),
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      initialRoute: '/DashboardScreen',
+      initialRoute: '/Splash1',
       getPages: [
+        //New screens
+        GetPage(
+            name: '/Splash1',
+            page: () => Splash1()),
+
+
+
+
+        //Old screens
         GetPage(
             name: '/SplashScreen',
             page: () => Splash()),
+        GetPage(
+            name: '/LocalUI',
+            page: () => LocalUI()),
         GetPage(
             name: '/DashboardScreen',
             page: () => DashboardScreen()), // Splash screen as the first route
@@ -62,7 +78,8 @@ class MyApp extends StatelessWidget {
                       updatedAt: '',
                       tankLatlong: '',
                       id: ''),
-                )), // Login screen route
+                )
+        ), // Login screen route
         //  GetPage(name: '/CleaningCalendar', page: () => CleaningCalendar(username: '',)),  // Dashboard or next screen route
       ],
       theme: ThemeData(

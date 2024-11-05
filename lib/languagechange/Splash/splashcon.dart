@@ -1,8 +1,9 @@
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import '../Dashboard/Dashboard.dart';
-import '../Login/Login.dart';
-class FirstController extends GetxController {
+
+import '../dashboard/dashUI.dart';
+import '../login/loginUI.dart';
+class fistcontroller extends GetxController {
   final box = GetStorage();
   @override
   void onInit() {
@@ -14,9 +15,9 @@ class FirstController extends GetxController {
     bool isLoggedIn = box.read('isLoggedIn') ?? false;
     if (isLoggedIn) {
       String? username = box.read('username');
-      Get.offAll(() => CleaningCalendar(username: username));  // Pass username to home screen
+      Get.offAll(() => CleanCalendar(username: username));  // Pass username to home screen
     } else {
-      Get.offAll(() => LoginScreen());
+      Get.offAll(() => LogScreen());
     }
   }
 }

@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import '../Camera/Test4/set.dart';
-import '../Login/Login.dart';
-import '../jsondashboard/model.dart';
-import 'Dashboardcontroller.dart';
-class CleaningCalendar extends StatelessWidget {
+import '../../Newscreen/jsondashboard/model.dart';
+import '../camera/camUI.dart';
+import '../login/loginUI.dart';
+import 'dashcontroller.dart';
+
+class CleanCalendar extends StatelessWidget {
   final String? username;
-  final ListTankController tankController = Get.put(ListTankController());
+  final ListController tankController = Get.put(ListController());
   final box = GetStorage();
-  CleaningCalendar({Key? key, required this.username}) : super(key: key);
+
+  CleanCalendar({Key? key, required this.username}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          username != null ? '$username\ Dashboard' : 'Dashboard',
+          username != null ? '$username dashboard'.tr : 'Dashboard'.tr,
           style: TextStyle(
             color: Colors.white,
             fontSize: screenWidth * 0.055,
@@ -38,7 +41,7 @@ class CleaningCalendar extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    username != null ? '$username\ Menu' : "",
+                    username != null ? '$username Menu' : "",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: screenWidth * 0.06,
@@ -66,7 +69,7 @@ class CleaningCalendar extends StatelessWidget {
             ),
             const ExpansionTile(
               leading: Icon(Icons.info, color: Colors.green),
-              title: Text("About iClean"),
+              title: Text('About iClean'),
               children: [
                 ListTile(
                   title: Text(
@@ -97,7 +100,60 @@ class CleaningCalendar extends StatelessWidget {
                 ),
               ],
             ),
-            const Divider(),
+          //  const SizedBox(height: 20),
+            Padding(padding: EdgeInsets.all(screenWidth * 0.04),
+              child: Text(
+                "Select Language",
+                style: TextStyle(color: Colors.black, fontSize: screenWidth * 0.045),
+              ),
+            ),
+            Obx(() {
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                decoration: BoxDecoration(
+                 // color: Colors.white,
+                 // borderRadius: BorderRadius.circular(8),
+                  // border: Border.all(
+                  //   color: Colors.green,
+                  //   width: 2,
+                  // ),
+                  // boxShadow: [
+                  //   BoxShadow(
+                  //     color: Colors.grey.withOpacity(0.2),
+                  //     spreadRadius: 2,
+                  //     blurRadius: 4,
+                  //     offset: Offset(0, 3),
+                  //   ),
+                  // ],
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: tankController.selectedLanguage.value,
+                    dropdownColor: Colors.white,
+                    icon: Icon(Icons.arrow_drop_down, color: Colors.green),
+                    iconSize: 28,
+                    style: TextStyle(color: Colors.black, fontSize: 16),
+                    hint: Text(
+                      'Select Language',
+                      style: TextStyle(color: Colors.grey[700]),
+                    ),
+                    items: tankController.languages.map((Map<String, String> lang) {
+                      return DropdownMenuItem<String>(
+                        value: lang['name'], // Use the language name for display
+                        child: Text(lang['name']!),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      if (newValue != null) {
+                        tankController.changeLanguage(newValue);
+                      }
+                    },
+                  ),
+                ),
+              );
+            }),
+
+            //  const Divider(),
             ListTile(
               leading: Icon(Icons.logout, color: Colors.green, size: screenWidth * 0.06),
               title: Text(
@@ -136,6 +192,7 @@ class CleaningCalendar extends StatelessWidget {
       ),
     );
   }
+
   Widget _buildTankCard(Tank tank, double screenWidth) {
     Color dueDaysColor = (tank.daysCountAfterClean ?? 0) > 3
         ? Colors.green
@@ -145,7 +202,7 @@ class CleaningCalendar extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        Get.to(() => ImageapiScreen(tankName: tank.name, tank: tank));
+        Get.to(() => ImageScreen(tankName: tank.name, tank: tank));
       },
       child: Card(
         elevation: 5,
@@ -156,17 +213,15 @@ class CleaningCalendar extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CircleAvatar(
-                radius: screenWidth * 0.08,
-                backgroundColor: Colors.greenAccent.shade700,
-                backgroundImage: const AssetImage('assets/Images/personclean.png'),
-              ),
               SizedBox(width: screenWidth * 0.04),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children:[
+                      Text(
                       tank.name,
                       style: TextStyle(
                         fontSize: screenWidth * 0.048,
@@ -174,35 +229,49 @@ class CleaningCalendar extends StatelessWidget {
                         color: Colors.black87,
                       ),
                     ),
-                    SizedBox(height: screenWidth * 0.02),
-                    Row(
-                      children: [
-                        Text(
-                          "Due days: ",
-                          style: TextStyle(fontSize: screenWidth * 0.04, color: Colors.black54),
-                        ),
                         CircleAvatar(
-                          radius: screenWidth * 0.035,
+                          radius: screenWidth * 0.050,
                           backgroundColor: dueDaysColor,
                           child: Text(
                             (tank.daysCountAfterClean ?? 0).toString(),
                             style: TextStyle(color: Colors.white, fontSize: screenWidth * 0.03),
                           ),
                         ),
-                      ],
-                    ),
+              ]
+              ),
+                    //SizedBox(height: screenWidth * 0.02),
+                    // Row(
+                    //   children: [
+                    //     Text(
+                    //       "Due days: ",
+                    //       style: TextStyle(fontSize: screenWidth * 0.04, color: Colors.black54),
+                    //     ),
+                    //     CircleAvatar(
+                    //       radius: screenWidth * 0.035,
+                    //       backgroundColor: dueDaysColor,
+                    //       child: Text(
+                    //         (tank.daysCountAfterClean ?? 0).toString(),
+                    //         style: TextStyle(color: Colors.white, fontSize: screenWidth * 0.03),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
+                    SizedBox(height: screenWidth * 0.02),
+                    Text("last cleaned date : 13/10/2024",style: TextStyle(fontSize: screenWidth * 0.038,),),
+                    SizedBox(height: screenWidth * 0.02),
+                    Text("next cleaning date: 28/10/2024",style: TextStyle(fontSize: screenWidth * 0.038),),
                   ],
                 ),
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildStatusIcon(screenWidth, "Before", tank.beforeImg),
-                  SizedBox(height: screenWidth * 0.02),
-                  _buildStatusIcon(screenWidth, "During", tank.duringImg),
-                  SizedBox(height: screenWidth * 0.02),
-                  _buildStatusIcon(screenWidth, "After", tank.afterImg),
-                ],
+              const Column(
+                // mainAxisAlignment: MainAxisAlignment.center,
+                // children: [
+                //   _buildStatusIcon(screenWidth, "Before", tank.beforeImg),
+                //   SizedBox(height: screenWidth * 0.02),
+                //   _buildStatusIcon(screenWidth, "During", tank.duringImg),
+                //   SizedBox(height: screenWidth * 0.02),
+                //   _buildStatusIcon(screenWidth, "After", tank.afterImg),
+                // ],
               ),
             ],
           ),
@@ -210,6 +279,7 @@ class CleaningCalendar extends StatelessWidget {
       ),
     );
   }
+
   Widget _buildStatusIcon(double screenWidth, String status, String imgPath) {
     bool hasData = imgPath.isNotEmpty;
     Color iconColor = hasData ? Colors.green : Colors.red;
@@ -229,6 +299,7 @@ class CleaningCalendar extends StatelessWidget {
       ],
     );
   }
+
   void _showLogoutDialog(BuildContext context, GetStorage box) {
     showDialog(
       context: context,
@@ -254,7 +325,7 @@ class CleaningCalendar extends StatelessWidget {
               onPressed: () {
                 box.remove('isLoggedIn');
                 box.remove('username');
-                Get.offAll(LoginScreen());
+                Get.offAll(LogScreen());
               },
             ),
           ],

@@ -20,28 +20,28 @@ class LocationCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Text(
+                  //   location.name,
+                  //   style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  // ),
                   Text(
-                    location.name,
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    '(${location.engName})',
-                    style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                    '${location.engName}',
+                    style: TextStyle(fontSize: 18, color: Colors.black,fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8.0),
-                  const Text(
-                    'கடைசியாக சுத்தம் செய்யப்படும் தேதி',
-                    style: TextStyle(fontSize: 12, color: Colors.black54),
-                  ),
+                  // const Text(
+                  //   'கடைசியாக சுத்தம் செய்யப்படும் தேதி',
+                  //   style: TextStyle(fontSize: 12, color: Colors.black54),
+                  // ),
                   Text(
                     'Next cleaning date: ${location.nextDate}',
                     style: const TextStyle(fontSize: 14),
                   ),
                   const SizedBox(height: 4.0),
-                  const Text(
-                    'அடுத்து சுத்தம் செய்யப்படும் தேதி',
-                    style: TextStyle(fontSize: 12, color: Colors.black54),
-                  ),
+                  // const Text(
+                  //   'அடுத்து சுத்தம் செய்யப்படும் தேதி',
+                  //   style: TextStyle(fontSize: 12, color: Colors.black54),
+                  // ),
                   Text(
                     'Last cleaned date: ${location.lastDate}',
                     style: const TextStyle(fontSize: 14),
@@ -49,6 +49,7 @@ class LocationCard extends StatelessWidget {
                 ],
               ),
             ),
+
             Container(
               decoration: BoxDecoration(
                 color: location.status == 0

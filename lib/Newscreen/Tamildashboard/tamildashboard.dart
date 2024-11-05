@@ -14,8 +14,8 @@ class DashboardScreen extends StatelessWidget {
         title: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('பிகேடிஆர் டாஷ்போர்டு', style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.white)),
-            Text('PKTR Dashboard', style: TextStyle(fontSize: 12,color: Colors.white)),
+          //  Text('பிகேடிஆர் டாஷ்போர்டு', style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.white)),
+            Text('PKTR Dashboard', style: TextStyle(fontSize: 18,color: Colors.white,fontWeight: FontWeight.bold)),
           ],
         ),
         actions: const [

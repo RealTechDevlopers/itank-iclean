@@ -1,6 +1,6 @@
 // import 'package:get/get.dart';
-// import 'service.dart';
-// import 'model.dart';
+// import 'service1.dart';
+// import 'model1.dart';
 //
 // class ListTankController extends GetxController {  // Use PascalCase here
 //   var tankList = <Tank>[].obs;  // Observable list of Tank model
