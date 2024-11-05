@@ -5,14 +5,11 @@ import '../../Newscreen/jsondashboard/model.dart';
 import '../camera/camUI.dart';
 import '../login/loginUI.dart';
 import 'dashcontroller.dart';
-
 class CleanCalendar extends StatelessWidget {
   final String? username;
   final ListController tankController = Get.put(ListController());
   final box = GetStorage();
-
   CleanCalendar({Key? key, required this.username}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -41,7 +38,7 @@ class CleanCalendar extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    username != null ? '$username Menu' : "",
+                    username != null ? '$username menu'.tr : "",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: screenWidth * 0.06,
@@ -55,47 +52,47 @@ class CleanCalendar extends StatelessWidget {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Panchayat: ${firstTank.panchayatName}', style: const TextStyle(color: Colors.white)),
-                          Text('Union: ${firstTank.unionName}', style: const TextStyle(color: Colors.white)),
-                          Text('Tank Capacity: ${firstTank.capacity} Liters', style: const TextStyle(color: Colors.white)),
+                          Text('${"panchayat".tr}: ${firstTank.panchayatName}', style: const TextStyle(color: Colors.white)),
+                          Text('${"union".tr}: ${firstTank.unionName}'.tr, style: const TextStyle(color: Colors.white)),
+                          Text('${"tank Capacity".tr}: ${firstTank.capacity} Liters'.tr, style: const TextStyle(color: Colors.white)),
                         ],
                       );
                     } else {
-                      return const Text('No tank data available', style: TextStyle(color: Colors.white));
+                      return  Text('no tank data available'.tr, style: const TextStyle(color: Colors.white));
                     }
                   }),
                 ],
               ),
             ),
-            const ExpansionTile(
+             ExpansionTile(
               leading: Icon(Icons.info, color: Colors.green),
-              title: Text('About iClean'),
-              children: [
+              title: Text('about iclean'.tr),
+              children:  [
                 ListTile(
                   title: Text(
-                    "Scheduled Cleanings",
+                    "scheduled Cleanings".tr,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
-                    "Tanks are scheduled for cleaning every 15 days to maintain compliance. The app highlights tanks due for cleaning.",
+                    "tanks are scheduled for cleaning every 15 days to maintain compliance. The app highlights tanks due for cleaning.".tr,
                   ),
                 ),
                 ListTile(
                   title: Text(
-                    "Overdue Notifications",
+                    "overdue Notifications".tr,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
-                    "If tanks aren’t cleaned on time, the app shows indicators to alert users about overdue cleanings.",
+                    "if tanks aren’t cleaned on time, the app shows indicators to alert users about overdue cleanings.".tr,
                   ),
                 ),
                 ListTile(
                   title: Text(
-                    "Clean Status Tracking",
+                    "clean Status Tracking".tr,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
-                    "Each cleaning stage ('Before,' 'During,' 'After') is recorded with timestamps, images, and status icons, providing full transparency in the maintenance lifecycle.",
+                    "each cleaning stage ('Before,' 'During,' 'After') is recorded with timestamps, images, and status icons, providing full transparency in the maintenance lifecycle.".tr,
                   ),
                 ),
               ],
@@ -103,7 +100,7 @@ class CleanCalendar extends StatelessWidget {
           //  const SizedBox(height: 20),
             Padding(padding: EdgeInsets.all(screenWidth * 0.04),
               child: Text(
-                "Select Language",
+                'select language'.tr,
                 style: TextStyle(color: Colors.black, fontSize: screenWidth * 0.045),
               ),
             ),
@@ -134,7 +131,7 @@ class CleanCalendar extends StatelessWidget {
                     iconSize: 28,
                     style: TextStyle(color: Colors.black, fontSize: 16),
                     hint: Text(
-                      'Select Language',
+                      'select language'.tr,
                       style: TextStyle(color: Colors.grey[700]),
                     ),
                     items: tankController.languages.map((Map<String, String> lang) {
@@ -152,12 +149,11 @@ class CleanCalendar extends StatelessWidget {
                 ),
               );
             }),
-
             //  const Divider(),
             ListTile(
               leading: Icon(Icons.logout, color: Colors.green, size: screenWidth * 0.06),
               title: Text(
-                'Logout',
+                'logout'.tr,
                 style: TextStyle(fontSize: screenWidth * 0.045),
               ),
               onTap: () {
@@ -192,14 +188,12 @@ class CleanCalendar extends StatelessWidget {
       ),
     );
   }
-
   Widget _buildTankCard(Tank tank, double screenWidth) {
     Color dueDaysColor = (tank.daysCountAfterClean ?? 0) > 3
         ? Colors.green
         : (tank.daysCountAfterClean ?? 0) >= 1
         ? Colors.orange
         : Colors.red;
-
     return GestureDetector(
       onTap: () {
         Get.to(() => ImageScreen(tankName: tank.name, tank: tank));
@@ -257,9 +251,9 @@ class CleanCalendar extends StatelessWidget {
                     //   ],
                     // ),
                     SizedBox(height: screenWidth * 0.02),
-                    Text("last cleaned date : 13/10/2024",style: TextStyle(fontSize: screenWidth * 0.038,),),
+                    Text("last cleaned date : 13/10/2024".tr,style: TextStyle(fontSize: screenWidth * 0.038,),),
                     SizedBox(height: screenWidth * 0.02),
-                    Text("next cleaning date: 28/10/2024",style: TextStyle(fontSize: screenWidth * 0.038),),
+                    Text("next cleaning date: 28/10/2024".tr,style: TextStyle(fontSize: screenWidth * 0.038),),
                   ],
                 ),
               ),
@@ -306,22 +300,22 @@ class CleanCalendar extends StatelessWidget {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(
-            "Logout",
+            "logout".tr,
             style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.045),
           ),
           content: Text(
-            "Are you sure you want to logout?",
+            "are you sure you want to logout?".tr,
             style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.04),
           ),
           actions: <Widget>[
             TextButton(
-              child: Text("Cancel", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.04)),
+              child: Text("cancel".tr, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.04)),
               onPressed: () {
                 Get.back();
               },
             ),
             TextButton(
-              child: Text("Logout", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.04)),
+              child: Text("logout".tr, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.04)),
               onPressed: () {
                 box.remove('isLoggedIn');
                 box.remove('username');

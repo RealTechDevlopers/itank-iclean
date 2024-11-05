@@ -31,7 +31,7 @@ class LogiController extends GetxController {
       'password': password.value,
     };
 
-    final url = Uri.parse('http://devftp.itank.io/water/iNeer/api/icleanApi/loginValidation.php');
+    final url = Uri.parse('http://devftp.itank.io/water/ineer/api/icleanApi/loginValidation.php');
 
     try {
       final response = await http.post(url, body: data);
