@@ -16,6 +16,7 @@ class ListController extends GetxController {
   final List<Map<String, String>> languages = [
     {'name': 'English', 'locale': 'en_US'},
     {'name': 'Tamil', 'locale': 'ta_ES'},
+    {'name': "Hindi",'locale':""}
   ];
 
   // void updateSelectedItem(String newItem) {
@@ -29,6 +30,7 @@ class ListController extends GetxController {
     if (localeCode != null) {
       var localeList = localeCode.split('_');
       Get.updateLocale(Locale(localeList[0], localeList[1]));
+      // update();
     }
   }
 

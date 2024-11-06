@@ -4,13 +4,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../Newscreen/jsondashboard/model.dart';
+import '../dashboard/languagecontroller.dart';
 import 'camcontroller.dart';
-
-
 class ImageScreen extends StatelessWidget {
   final String tankName;
   final Tank tank;
   final Imagecontroller controller = Get.put(Imagecontroller());
+  final LanguageController langController = Get.put(LanguageController());
 
   ImageScreen({Key? key, required this.tankName, required this.tank}) : super(key: key);
 
@@ -44,15 +44,15 @@ class ImageScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      _buildSectionWithUpload(context, 'Before', controller.beforeImage, controller, tank, screenWidth),
+                      _buildSectionWithUpload(context, 'before'.tr, controller.beforeImage, controller, tank, screenWidth),
                       SizedBox(height: screenHeight * 0.05),
                       controller.beforeImage.value != null || tank.beforeImg != ""
-                          ? _buildSectionWithUpload(context, 'During', controller.duringImage, controller, tank, screenWidth)
-                          : _buildNoImage(context, 'During', screenWidth, screenHeight),
+                          ? _buildSectionWithUpload(context, 'during'.tr, controller.duringImage, controller, tank, screenWidth)
+                          : _buildNoImage(context, 'during'.tr, screenWidth, screenHeight),
                       SizedBox(height: screenHeight * 0.05),
                       controller.duringImage.value != null || tank.duringImg != ""
-                          ? _buildSectionWithUpload(context, 'After', controller.afterImage, controller, tank, screenWidth)
-                          : _buildNoImage(context, 'After', screenWidth, screenHeight),
+                          ? _buildSectionWithUpload(context, 'after'.tr, controller.afterImage, controller, tank, screenWidth)
+                          : _buildNoImage(context, 'after'.tr, screenWidth, screenHeight),
                       SizedBox(height: screenHeight * 0.04),
                       if (controller.uploadProgress > 0.0)
                         LinearProgressIndicator(value: controller.uploadProgress),
@@ -94,7 +94,7 @@ class ImageScreen extends StatelessWidget {
                 child: TextButton.icon(
                   onPressed: () {
                     if (imageFile.value != null) {
-                      String tankType = section == "Before" ? "beforeImg" : section == "During" ? "duringImg" : "afterImg";
+                      String tankType = section == "before".tr ? "beforeImg" : section == "during".tr ? "duringImg" : "afterImg";
                       log("Selection : $section");
                       controller.uploadImage(imageFile.value!, tankName, tankType, tank);
                     } else {
@@ -107,7 +107,7 @@ class ImageScreen extends StatelessWidget {
                     size: screenWidth * 0.08,
                   ),
                   label: Text(
-                    'Upload',
+                    'upload'.tr,
                     style: TextStyle(
                       color: Colors.green,
                       fontSize: screenWidth * 0.035,
@@ -225,7 +225,7 @@ class ImageScreen extends StatelessWidget {
                     size: screenWidth * 0.08,
                   ),
                   label: Text(
-                    'Upload',
+                    'upload'.tr,
                     style: TextStyle(
                       color: Colors.grey,
                       fontSize: screenWidth * 0.035,

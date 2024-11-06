@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-
 class AppTranslations extends Translations {
   @override
   Map<String, Map<String, String>> get keys => {
@@ -27,6 +26,7 @@ class AppTranslations extends Translations {
       "union": "Union",
       "tank Capacity": "Tank Capacity",
       "no tank data available": "No tank data available",
+      "upload":"Upload",
     },
     'ta_ES': {
       "duedays": "தவணை நாள்",
@@ -52,6 +52,34 @@ class AppTranslations extends Translations {
       "union": "ஒன்றியம்",
       "tank Capacity": "தொட்டி கொள்ளளவு",
       "no tank data available": "தொட்டி தரவு இல்லை",
+      "upload":"பதிவேற்றம்",
     },
+    'hi_IN': {
+      "duedays": "अवधि दिन",
+      "dashboard": "डैशबोर्ड",
+      "menu": "मेनू",
+      "logout": "लॉगआउट",
+      "about iclean": "iClean के बारे में",
+      "before": "काम से पहले",
+      "during": "काम के दौरान",
+      "after": "काम के बाद",
+      "next cleaning date": "अगली सफाई की तारीख",
+      "last cleaned date": "अंतिम सफाई की तारीख",
+      "select language": "भाषा चुनें",
+      "are you sure you want to logout?": "क्या आप वाकई लॉगआउट करना चाहते हैं?",
+      "cancel": "रद्द करें",
+      "scheduled Cleanings": "निर्धारित सफाई",
+      "tanks are scheduled for cleaning every 15 days to maintain compliance. The app highlights tanks due for cleaning.": "अनुपालन बनाए रखने के लिए हर 15 दिनों में टैंकों की सफाई का कार्यक्रम बनाया गया है। ऐप सफाई के लिए निर्धारित टैंकों को दिखाता है।",
+      "overdue Notifications": "अतिदेय सूचनाएं",
+      "if tanks aren’t cleaned on time, the app shows indicators to alert users about overdue cleanings.": "यदि टैंक समय पर साफ नहीं किए जाते हैं, तो ऐप अतिदेय सफाई के बारे में चेतावनी देने के लिए संकेतक दिखाता है।",
+      "clean Status Tracking": "सफाई स्थिति ट्रैकिंग",
+      "each cleaning stage ('Before,' 'During,' 'After') is recorded with timestamps, images, and status icons, providing full transparency in the maintenance lifecycle.": "प्रत्येक सफाई चरण ('काम से पहले', 'काम के दौरान', 'काम के बाद') को समय स्टैम्प, चित्रों और स्थिति आइकन के साथ दर्ज किया जाता है, जिससे रखरखाव जीवनचक्र में पूरी पारदर्शिता मिलती है।",
+      "panchayat": "पंचायत",
+      "union": "संघ",
+      "tank Capacity": "टैंक क्षमता",
+      "no tank data available": "कोई टैंक डेटा उपलब्ध नहीं",
+      "upload": "अपलोड",
+    },
+
   };
 }

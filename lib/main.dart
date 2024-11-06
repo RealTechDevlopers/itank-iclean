@@ -16,6 +16,8 @@ void main() async {
   await GetStorage.init();
   runApp(const MyApp());
 }
+
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
@@ -23,13 +25,17 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       translations: AppTranslations(),
       locale: Locale('en', 'US'),       // Initial locale
-      fallbackLocale: Locale('ta', 'US'), // Fallback locale
+      fallbackLocale: Locale('ta'), // Fallback locale
+      // supportedLocales: const [
+      //   Locale('en', 'US'),
+      //   Locale('ta', 'ES'),
+      // ],
       // initialBinding: CaptureBinding(),
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       initialRoute: '/Splash1',
       getPages: [
-        //New screens
+        // New screens
         GetPage(
             name: '/Splash1',
             page: () => Splash1()),
