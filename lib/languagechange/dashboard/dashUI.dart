@@ -112,20 +112,23 @@ class CleanCalendar extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<String>(
-                    value: tankController.selectedLanguage.value,  // Ensure this matches one of the values
+                    // Ensure selected value matches items in the dropdown
+                    value: tankController.selectedLanguage.value,
                     dropdownColor: Colors.white,
                     icon: Icon(Icons.arrow_drop_down, color: Colors.green),
                     iconSize: 28,
                     style: TextStyle(color: Colors.black, fontSize: 16),
                     items: tankController.languages.map((Map<String, String> lang) {
-                      // Ensure no duplicates in value
+                      // Ensure unique values in DropdownMenuItem
                       return DropdownMenuItem<String>(
-                        value: lang['name'],  // Ensure the 'name' is unique for each item
+                        value: lang['name'],
                         child: Text(lang['name']!),
                       );
                     }).toList(),
                     onChanged: (String? newValue) {
                       if (newValue != null) {
+                        // Log change to ensure Hindi is correctly set
+                        print("Selected Language: $newValue");
                         tankController.changeLanguage(newValue);
                       }
                     },
@@ -133,6 +136,7 @@ class CleanCalendar extends StatelessWidget {
                 ),
               );
             }),
+
 
             ListTile(
               leading: Icon(Icons.logout, color: Colors.green, size: screenWidth * 0.06),

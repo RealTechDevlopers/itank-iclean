@@ -10,7 +10,6 @@ class ImageScreen extends StatelessWidget {
   final String tankName;
   final Tank tank;
   final Imagecontroller controller = Get.put(Imagecontroller());
-  final LanguageController langController = Get.put(LanguageController());
 
   ImageScreen({Key? key, required this.tankName, required this.tank}) : super(key: key);
 

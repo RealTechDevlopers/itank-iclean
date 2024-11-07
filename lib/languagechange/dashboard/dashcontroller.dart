@@ -16,7 +16,7 @@ class ListController extends GetxController {
   final List<Map<String, String>> languages = [
     {'name': 'English', 'locale': 'en_US'},
     {'name': 'Tamil', 'locale': 'ta_ES'},
-    {'name': "Hindi",'locale':""}
+    {'name': "Hindi",'locale':"hi_IN"}
   ];
 
   // void updateSelectedItem(String newItem) {
