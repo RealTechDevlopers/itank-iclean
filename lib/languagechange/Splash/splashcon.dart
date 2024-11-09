@@ -15,7 +15,7 @@ class fistcontroller extends GetxController {
     bool isLoggedIn = box.read('isLoggedIn') ?? false;
     if (isLoggedIn) {
       String? username = box.read('username');
-      Get.offAll(() => CleanCalendar(username: username));  // Pass username to home screen
+      Get.offAll(() => CleanCalendar(username: username, ));  // Pass username to home screen
     } else {
       Get.offAll(() => LogScreen());
     }

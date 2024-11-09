@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -5,14 +6,11 @@ import '../../Newscreen/jsondashboard/model.dart';
 import '../camera/camUI.dart';
 import '../login/loginUI.dart';
 import 'dashcontroller.dart';
-
 class CleanCalendar extends StatelessWidget {
   final String? username;
   final ListController tankController = Get.put(ListController());
   final box = GetStorage();
-
   CleanCalendar({Key? key, required this.username}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -112,14 +110,12 @@ class CleanCalendar extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<String>(
-                    // Ensure selected value matches items in the dropdown
                     value: tankController.selectedLanguage.value,
                     dropdownColor: Colors.white,
                     icon: Icon(Icons.arrow_drop_down, color: Colors.green),
                     iconSize: 28,
                     style: TextStyle(color: Colors.black, fontSize: 16),
                     items: tankController.languages.map((Map<String, String> lang) {
-                      // Ensure unique values in DropdownMenuItem
                       return DropdownMenuItem<String>(
                         value: lang['name'],
                         child: Text(lang['name']!),
@@ -127,8 +123,6 @@ class CleanCalendar extends StatelessWidget {
                     }).toList(),
                     onChanged: (String? newValue) {
                       if (newValue != null) {
-                        // Log change to ensure Hindi is correctly set
-                        print("Selected Language: $newValue");
                         tankController.changeLanguage(newValue);
                       }
                     },
@@ -136,8 +130,6 @@ class CleanCalendar extends StatelessWidget {
                 ),
               );
             }),
-
-
             ListTile(
               leading: Icon(Icons.logout, color: Colors.green, size: screenWidth * 0.06),
               title: Text(
@@ -186,7 +178,9 @@ class CleanCalendar extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        Get.to(() => ImageScreen(tankName: tank.name, tank: tank));
+        log("comming");
+        log(tank.beforeImg + tank.duringImg);
+        Get.to(() => ImageScreen(tankName: tank.tankName, tank: tank, beforeImg: tank,duringImg:tank, afterImg: tank,));
       },
       child: Card(
         elevation: 5,
@@ -206,7 +200,7 @@ class CleanCalendar extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          tank.name,
+                          tank.tankName,
                           style: TextStyle(
                             fontSize: screenWidth * 0.048,
                             fontWeight: FontWeight.bold,

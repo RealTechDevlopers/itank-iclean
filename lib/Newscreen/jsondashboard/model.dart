@@ -27,7 +27,7 @@ class TankDataResponse {
 }
 
 class Tank {
-  String name;
+  String tankName;
   String imei;
   String devicename;
   String categoryType;
@@ -48,7 +48,7 @@ class Tank {
   String id;
 
   Tank({
-    required this.name,
+    required this.tankName,
     required this.imei,
     required this.devicename,
     required this.categoryType,
@@ -71,7 +71,7 @@ class Tank {
 
   factory Tank.fromJson(Map<String, dynamic> json) {
     return Tank(
-      name: json['name'],
+      tankName: json['tankName'],
       imei: json['imei'],
       devicename: json['devicename'],
       categoryType: json['categoryType'],
@@ -93,11 +93,14 @@ class Tank {
     );
   }
 
+  // get tankName => null;
+
 
 
   Map<String, dynamic> toJson() {
     return {
-      'name': name,
+     // 'name': name,
+      'tankName': tankName,
       'imei': imei,
       'devicename': devicename,
       'categoryType': categoryType,

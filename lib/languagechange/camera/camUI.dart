@@ -4,15 +4,15 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../Newscreen/jsondashboard/model.dart';
-import '../dashboard/languagecontroller.dart';
 import 'camcontroller.dart';
 class ImageScreen extends StatelessWidget {
   final String tankName;
   final Tank tank;
+  final Tank beforeImg;
+  final Tank duringImg;
+  final Tank afterImg;
   final Imagecontroller controller = Get.put(Imagecontroller());
-
-  ImageScreen({Key? key, required this.tankName, required this.tank}) : super(key: key);
-
+  ImageScreen({Key? key, required this.tankName, required this.tank,required this.beforeImg, required this.duringImg, required this.afterImg}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,18 +43,36 @@ class ImageScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      _buildSectionWithUpload(context, 'before'.tr, controller.beforeImage, controller, tank, screenWidth),
+                      _buildSectionWithUpload(context, 'before', controller.beforeImage, controller, tank, screenWidth),
                       SizedBox(height: screenHeight * 0.05),
                       controller.beforeImage.value != null || tank.beforeImg != ""
-                          ? _buildSectionWithUpload(context, 'during'.tr, controller.duringImage, controller, tank, screenWidth)
-                          : _buildNoImage(context, 'during'.tr, screenWidth, screenHeight),
+                          ? _buildSectionWithUpload(context, 'during', controller.duringImage, controller, tank, screenWidth)
+                          : _buildNoImage(context, 'during', screenWidth, screenHeight),
                       SizedBox(height: screenHeight * 0.05),
                       controller.duringImage.value != null || tank.duringImg != ""
-                          ? _buildSectionWithUpload(context, 'after'.tr, controller.afterImage, controller, tank, screenWidth)
-                          : _buildNoImage(context, 'after'.tr, screenWidth, screenHeight),
+                          ? _buildSectionWithUpload(context, 'after', controller.afterImage, controller, tank, screenWidth)
+                          : _buildNoImage(context, 'after', screenWidth, screenHeight),
                       SizedBox(height: screenHeight * 0.04),
-                      if (controller.uploadProgress > 0.0)
-                        LinearProgressIndicator(value: controller.uploadProgress),
+                      // Corrected StreamBuilder
+                      StreamBuilder<double>(
+                        stream: controller.uploadProgressStream,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData && snapshot.data! > 0) {
+                            return Column(
+                              children: [
+                                Text("Uploading: ${snapshot.data!.toStringAsFixed(0)}%"),
+                                CircularProgressIndicator(
+                                  value: snapshot.data! / 100, // Scale percentage to 0-1
+                                  backgroundColor: Colors.green,
+                                  color: Colors.green,
+                                ),
+                              ],
+                            );
+                          } else {
+                            return SizedBox.shrink(); // Return empty widget if no data
+                          }
+                        },
+                      ),
                     ],
                   ),
                 ),
@@ -74,7 +92,7 @@ class ImageScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          section,
+          section.tr,
           style: TextStyle(fontSize: screenWidth * 0.045, fontWeight: FontWeight.bold),
         ),
         SizedBox(height: screenWidth * 0.03),
@@ -93,7 +111,7 @@ class ImageScreen extends StatelessWidget {
                 child: TextButton.icon(
                   onPressed: () {
                     if (imageFile.value != null) {
-                      String tankType = section == "before".tr ? "beforeImg" : section == "during".tr ? "duringImg" : "afterImg";
+                      String tankType = section == "before" ? "beforeImg" : section == "during"? "duringImg" : "afterImg";
                       log("Selection : $section");
                       controller.uploadImage(imageFile.value!, tankName, tankType, tank);
                     } else {
@@ -154,7 +172,7 @@ class ImageScreen extends StatelessWidget {
         ),
         child: useNetworkImage
             ? Image.network(
-          imgUrl,
+          imgUrl.replaceAll("https", "http"),
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) => const Icon(
             Icons.error,
@@ -272,6 +290,9 @@ class ImageScreen extends StatelessWidget {
   }
 
   void _showImageModalURL(BuildContext context, String imgUrl) {
+    // Log the URL to confirm it's correct
+    log("Showing modal for image URL: $imgUrl");
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -283,11 +304,52 @@ class ImageScreen extends StatelessWidget {
               Center(
                 child: Image.network(
                   imgUrl,
+                  // .replaceAll("https", "http"),
                   fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) => const Icon(
-                    Icons.error,
-                    color: Colors.red,
-                  ),
+                  loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                    if (loadingProgress == null) {
+                      return child;
+                    } else {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                  },
+                  errorBuilder: (context, error, stackTrace) {
+                    log("Failed to load image: $error");
+                    return Image.network(
+                      imgUrl
+                          .replaceAll("https", "http"),
+                      fit: BoxFit.contain,
+                      loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                        if (loadingProgress == null) {
+                          return child;
+                        } else {
+                          return const Center(child: CircularProgressIndicator());
+                        }
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        log("Failed to load image: $error");
+                        return Image.network(
+                          imgUrl
+                              .replaceAll("https", "http"),
+                          fit: BoxFit.contain,
+                          loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                            if (loadingProgress == null) {
+                              return child;
+                            } else {
+                              return const Center(child: CircularProgressIndicator());
+                            }
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            log("Failed to load image: $error");
+                            return const Icon(
+                              Icons.error,
+                              color: Colors.red,
+                            );
+                          },
+                        );
+                      },
+                    );
+                  },
                 ),
               ),
               Positioned(

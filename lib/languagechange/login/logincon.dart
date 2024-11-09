@@ -55,7 +55,7 @@ class LogiController extends GetxController {
 
           // Navigate to Home Screen
           //Get.offAllNamed('/CleaningCalendar');
-          Get.offAll(() => CleanCalendar(username: username.value));
+          Get.offAll(() => CleanCalendar(username: username.value,  ));
         } else {
           errorMessage.value = responseData['message'] ?? 'Login failed';
           Get.snackbar(

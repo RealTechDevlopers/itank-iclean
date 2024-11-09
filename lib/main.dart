@@ -85,7 +85,7 @@ class MyApp extends StatelessWidget {
               page: () => ImageapiScreen(
                     tankName: '',
                     tank: Tank(
-                        name: "",
+                        tankName: "",
                         imei: "",
                         devicename: "",
                         categoryType: "",

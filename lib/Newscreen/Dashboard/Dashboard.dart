@@ -145,7 +145,7 @@ class CleaningCalendar extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        Get.to(() => ImageapiScreen(tankName: tank.name, tank: tank));
+        Get.to(() => ImageapiScreen(tankName: tank.tankName, tank: tank));
       },
       child: Card(
         elevation: 5,
@@ -167,7 +167,7 @@ class CleaningCalendar extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      tank.name,
+                      tank.tankName,
                       style: TextStyle(
                         fontSize: screenWidth * 0.048,
                         fontWeight: FontWeight.bold,

@@ -5,14 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../jsondashboard/model.dart';
 import 'setcontroller.dart';
-
 class ImageapiScreen extends StatelessWidget {
   final String tankName;
   final Tank tank;
   final Imageapicontroller controller = Get.put(Imageapicontroller());
-
   ImageapiScreen({Key? key, required this.tankName, required this.tank}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -138,6 +135,13 @@ class ImageapiScreen extends StatelessWidget {
       imgUrl = jsonDecode(tank.afterImg)['url'];
       useNetworkImage = true;
     }
+    
+    if(useNetworkImage){
+      log("Image URL for $section:$imgUrl");
+    } else if (imageFile.value != null){
+      log("Local file path for $section: ${imageFile.value!.path}");
+    }
+    
 
     return GestureDetector(
       onTap: () {
@@ -159,7 +163,8 @@ class ImageapiScreen extends StatelessWidget {
         ),
         child: useNetworkImage
             ? Image.network(
-          imgUrl,
+          imgUrl
+               .replaceAll("https", "http"),
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) => const Icon(
             Icons.error,
@@ -277,6 +282,9 @@ class ImageapiScreen extends StatelessWidget {
   }
 
   void _showImageModalURL(BuildContext context, String imgUrl) {
+    // Log the URL to confirm it's correct
+    log("Showing modal for image URL: $imgUrl");
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -288,11 +296,52 @@ class ImageapiScreen extends StatelessWidget {
               Center(
                 child: Image.network(
                   imgUrl,
+                     // .replaceAll("https", "http"),
                   fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) => const Icon(
-                    Icons.error,
-                    color: Colors.red,
-                  ),
+                  loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                    if (loadingProgress == null) {
+                      return child;
+                    } else {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                  },
+                  errorBuilder: (context, error, stackTrace) {
+                    log("Failed to load image: $error");
+                    return Image.network(
+                      imgUrl
+                       .replaceAll("https", "http"),
+                      fit: BoxFit.contain,
+                      loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                        if (loadingProgress == null) {
+                          return child;
+                        } else {
+                          return const Center(child: CircularProgressIndicator());
+                        }
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        log("Failed to load image: $error");
+                        return Image.network(
+                          imgUrl
+                              .replaceAll("https", "http"),
+                          fit: BoxFit.contain,
+                          loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                            if (loadingProgress == null) {
+                              return child;
+                            } else {
+                              return const Center(child: CircularProgressIndicator());
+                            }
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            log("Failed to load image: $error");
+                            return const Icon(
+                              Icons.error,
+                              color: Colors.red,
+                            );
+                          },
+                        );
+                      },
+                    );
+                  },
                 ),
               ),
               Positioned(
@@ -312,3 +361,4 @@ class ImageapiScreen extends StatelessWidget {
     );
   }
 }
+

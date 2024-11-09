@@ -200,11 +200,11 @@ class Imageapicontroller extends GetxController {
         'image': await MultipartFile.fromFile(compressedImage.path, filename: fileName),
         'date': DateTime.now(),
         'latlong': latLong.string,
-        'name': tank.name,
+        'tankName': tank.tankName,
         'imei': tank.imei,
         'tank_name': tankName,
         'updatedBy': tank.username,
-        // 'id': tank.id,
+         'id': tank.id,
       });
 
       String apiUrl = 'http://devftp.itank.io/water/ineer/api/icleanApi/iclean_imgUpload.php';

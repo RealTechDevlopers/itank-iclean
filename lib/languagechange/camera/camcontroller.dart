@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 import 'package:dio/dio.dart';
@@ -24,6 +25,14 @@ class Imagecontroller extends GetxController {
   RxString latLong = ''.obs;
   RxBool isLoading = false.obs;
   final ImagePicker _picker = ImagePicker();
+  final StreamController<double> _progressController = StreamController<double>.broadcast();
+  Stream<double> get uploadProgressStream => _progressController.stream;
+
+  @override
+  void onClose() {
+    _progressController.close(); // Close the stream when the controller is disposed
+    super.onClose();
+  }
 
   void logImageSize(File imageFile, String description) {
     final int bytes = imageFile.lengthSync();
@@ -46,11 +55,10 @@ class Imagecontroller extends GetxController {
   Future<void> pickImageWithLocation(String section) async {
     try {
       isLoading.value = true;
-
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         latLong.value = "Location services are disabled.";
-        isLoading.value = false;
+        //isLoading.value = false;
         return;
       }
 
@@ -200,11 +208,13 @@ class Imagecontroller extends GetxController {
         'image': await MultipartFile.fromFile(compressedImage.path, filename: fileName),
         'date': DateTime.now(),
         'latlong': latLong.string,
-        'name': tank.name,
+        //'tankName': tank.tankName,
+        //'name': tank.name,
         'imei': tank.imei,
         'tank_name': tankName,
         'updatedBy': tank.username,
-        // 'id': tank.id,
+        'username': tank.username,
+         'id': tank.id,
       });
 
       String apiUrl = 'http://devftp.itank.io/water/ineer/api/icleanApi/iclean_imgUpload.php';
@@ -215,6 +225,7 @@ class Imagecontroller extends GetxController {
         onSendProgress: (int sent, int total) {
           double progress = (sent / total) * 100;
           log("Upload progress: $progress%");
+         // uploadProgress = progress;
         },
       );
       if (response.statusCode == 200) {
