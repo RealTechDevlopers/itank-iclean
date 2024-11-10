@@ -6,6 +6,7 @@ import '../../Newscreen/jsondashboard/model.dart';
 import '../camera/camUI.dart';
 import '../login/loginUI.dart';
 import 'dashcontroller.dart';
+
 class CleanCalendar extends StatelessWidget {
   final String? username;
   final ListController tankController = Get.put(ListController());
@@ -53,13 +54,18 @@ class CleanCalendar extends StatelessWidget {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('${'panchayat'.tr}: ${firstTank.panchayatName}', style: const TextStyle(color: Colors.white)),
-                          Text('${'union'.tr}: ${firstTank.unionName}', style: const TextStyle(color: Colors.white)),
-                          Text('${'tank Capacity'.tr}: ${firstTank.capacity} ${'Liters'.tr}', style: const TextStyle(color: Colors.white)),
+                          Text('${'panchayat'.tr}: ${firstTank.panchayatName}',
+                              style: const TextStyle(color: Colors.white)),
+                          Text('${'union'.tr}: ${firstTank.unionName}',
+                              style: const TextStyle(color: Colors.white)),
+                          Text(
+                              '${'tank Capacity'.tr}: ${firstTank.capacity} ${'Liters'.tr}',
+                              style: const TextStyle(color: Colors.white)),
                         ],
                       );
                     } else {
-                      return Text('no tank data available'.tr, style: const TextStyle(color: Colors.white));
+                      return Text('no tank data available'.tr,
+                          style: const TextStyle(color: Colors.white));
                     }
                   }),
                 ],
@@ -75,7 +81,8 @@ class CleanCalendar extends StatelessWidget {
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
-                    "tanks are scheduled for cleaning every 15 days to maintain compliance. The app highlights tanks due for cleaning.".tr,
+                    "tanks are scheduled for cleaning every 15 days to maintain compliance. The app highlights tanks due for cleaning."
+                        .tr,
                   ),
                 ),
                 ListTile(
@@ -84,7 +91,8 @@ class CleanCalendar extends StatelessWidget {
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
-                    "if tanks aren’t cleaned on time, the app shows indicators to alert users about overdue cleanings.".tr,
+                    "if tanks aren’t cleaned on time, the app shows indicators to alert users about overdue cleanings."
+                        .tr,
                   ),
                 ),
                 ListTile(
@@ -93,7 +101,8 @@ class CleanCalendar extends StatelessWidget {
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
-                    "each cleaning stage ('Before,' 'During,' 'After') is recorded with timestamps, images, and status icons, providing full transparency in the maintenance lifecycle.".tr,
+                    "each cleaning stage ('Before,' 'During,' 'After') is recorded with timestamps, images, and status icons, providing full transparency in the maintenance lifecycle."
+                        .tr,
                   ),
                 ),
               ],
@@ -102,12 +111,14 @@ class CleanCalendar extends StatelessWidget {
               padding: EdgeInsets.all(screenWidth * 0.04),
               child: Text(
                 'select language'.tr,
-                style: TextStyle(color: Colors.black, fontSize: screenWidth * 0.045),
+                style: TextStyle(
+                    color: Colors.black, fontSize: screenWidth * 0.045),
               ),
             ),
             Obx(() {
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<String>(
                     value: tankController.selectedLanguage.value,
@@ -115,7 +126,8 @@ class CleanCalendar extends StatelessWidget {
                     icon: Icon(Icons.arrow_drop_down, color: Colors.green),
                     iconSize: 28,
                     style: TextStyle(color: Colors.black, fontSize: 16),
-                    items: tankController.languages.map((Map<String, String> lang) {
+                    items: tankController.languages
+                        .map((Map<String, String> lang) {
                       return DropdownMenuItem<String>(
                         value: lang['name'],
                         child: Text(lang['name']!),
@@ -131,7 +143,8 @@ class CleanCalendar extends StatelessWidget {
               );
             }),
             ListTile(
-              leading: Icon(Icons.logout, color: Colors.green, size: screenWidth * 0.06),
+              leading: Icon(Icons.logout,
+                  color: Colors.green, size: screenWidth * 0.06),
               title: Text(
                 'logout'.tr,
                 style: TextStyle(fontSize: screenWidth * 0.045),
@@ -173,14 +186,20 @@ class CleanCalendar extends StatelessWidget {
     Color dueDaysColor = (tank.daysCountAfterClean ?? 0) > 3
         ? Colors.green
         : (tank.daysCountAfterClean ?? 0) >= 1
-        ? Colors.orange
-        : Colors.red;
+            ? Colors.orange
+            : Colors.red;
 
     return GestureDetector(
       onTap: () {
         log("comming");
         log(tank.beforeImg + tank.duringImg);
-        Get.to(() => ImageScreen(tankName: tank.tankName, tank: tank, beforeImg: tank,duringImg:tank, afterImg: tank,));
+        Get.to(() => ImageScreen(
+              tankName: tank.tankName,
+              tank: tank,
+              beforeImg: tank,
+              duringImg: tank,
+              afterImg: tank,
+            ));
       },
       child: Card(
         elevation: 5,
@@ -199,28 +218,70 @@ class CleanCalendar extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          tank.tankName,
-                          style: TextStyle(
-                            fontSize: screenWidth * 0.048,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+                        Expanded(
+                          flex: 3, // Adjust flex as needed
+                          child: Text(
+                            tank.tankName,
+                            style: TextStyle(
+                              fontSize: screenWidth * 0.048,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
                           ),
                         ),
-                        CircleAvatar(
-                          radius: screenWidth * 0.050,
-                          backgroundColor: dueDaysColor,
-                          child: Text(
-                            (tank.daysCountAfterClean ?? 0).toString(),
-                            style: TextStyle(color: Colors.white, fontSize: screenWidth * 0.03),
+                        Flexible(
+                          flex: 1, // Adjust flex as needed
+                          child: CircleAvatar(
+                            radius: screenWidth * 0.070,
+                            backgroundColor: dueDaysColor,
+                            child: Text(
+                              (tank.daysCountAfterClean ?? 0).toString(),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: screenWidth * 0.03),
+                            ),
                           ),
                         ),
                       ],
                     ),
                     SizedBox(height: screenWidth * 0.02),
-                    Text("${"last cleaned date".tr} : ${tank}".tr, style: TextStyle(fontSize: screenWidth * 0.038)),
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 3, // Adjust flex as needed for spacing
+                          child: Text(
+                            "${"last cleaned date".tr}",
+                            style: TextStyle(fontSize: screenWidth * 0.038),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 1, // Adjust flex as needed
+                          child: Text(
+                            " ${tank}".tr,
+                            style: TextStyle(fontSize: screenWidth * 0.038),
+                          ),
+                        ),
+                      ],
+                    ),
                     SizedBox(height: screenWidth * 0.02),
-                    Text("${"next cleaning date".tr} : ${tank}".tr, style: TextStyle(fontSize: screenWidth * 0.038)),
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 3, // Adjust flex as needed for spacing
+                          child: Text(
+                            "${"next cleaning date".tr}",
+                            style: TextStyle(fontSize: screenWidth * 0.038),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 1, // Adjust flex as needed
+                          child: Text(
+                            " ${tank}".tr,
+                            style: TextStyle(fontSize: screenWidth * 0.038),
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -238,21 +299,27 @@ class CleanCalendar extends StatelessWidget {
         return AlertDialog(
           title: Text(
             "logout".tr,
-            style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.045),
+            style:
+                TextStyle(fontSize: MediaQuery.of(context).size.width * 0.045),
           ),
           content: Text(
             "are you sure you want to logout?".tr,
-            style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.04),
+            style:
+                TextStyle(fontSize: MediaQuery.of(context).size.width * 0.04),
           ),
           actions: <Widget>[
             TextButton(
-              child: Text("cancel".tr, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.04)),
+              child: Text("cancel".tr,
+                  style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.width * 0.04)),
               onPressed: () {
                 Get.back();
               },
             ),
             TextButton(
-              child: Text("logout".tr, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.04)),
+              child: Text("logout".tr,
+                  style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.width * 0.04)),
               onPressed: () {
                 box.remove('isLoggedIn');
                 box.remove('username');

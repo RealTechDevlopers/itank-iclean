@@ -28,6 +28,15 @@ class ImageScreen extends StatelessWidget {
             Navigator.of(context).pop();
           },
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add,size: 30,), // Replace with any icon you like
+            onPressed: () {
+              // Define the action you want to perform when this icon is pressed
+              print("Add icon pressed");
+            },
+          ),
+        ],
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: LayoutBuilder(
@@ -205,7 +214,7 @@ class ImageScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          section,
+          section.tr,
           style: TextStyle(fontSize: screenWidth * 0.045, fontWeight: FontWeight.bold),
         ),
         SizedBox(height: screenWidth * 0.03),

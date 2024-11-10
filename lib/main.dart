@@ -13,6 +13,7 @@ import 'Newscreen/Splash/splash.dart';
 import 'Newscreen/Tamildashboard/tamildashboard.dart';
 import 'Newscreen/local/local.dart';
 import 'Newscreen/local/localUI.dart';
+import 'demo.dart';
 import 'languagechange/Splash/splashUI.dart';
 import 'languagechange/dashboard/languagecontroller.dart';
 void main() async {
@@ -58,8 +59,10 @@ class MyApp extends StatelessWidget {
           GetPage(
               name: '/Splash1',
               page: () => Splash1()),
-      
-      
+
+          GetPage(
+              name: '/DemoPage',
+              page: () => DemoPage()),
       
       
           //Old screens
