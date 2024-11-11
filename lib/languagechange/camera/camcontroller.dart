@@ -21,6 +21,9 @@ class Imagecontroller extends GetxController {
   RxBool isBeforeLoading = false.obs;
   RxBool isDuringLoading = false.obs;
   RxBool isAfterLoading = false.obs;
+  Rx<DateTime?> lastAfterImageUpload = Rx<DateTime?>(null); // Stores the last "after" upload date
+  RxBool isActionEnabled = false.obs; // Determines if the action button is enabled
+
   var compressedImage = Rxn<File>();
   var uploadProgress = 0.0;
   RxString latLong = ''.obs;
@@ -36,6 +39,26 @@ class Imagecontroller extends GetxController {
         .close(); // Close the stream when the controller is disposed
     super.onClose();
   }
+
+  void _checkActionButtonStatus() {
+    if (lastAfterImageUpload.value == null) {
+      isActionEnabled.value = true; // Enable by default if there is no previous "after" image
+      log("WORKING in condition");
+    } else {
+      final daysSinceLastUpload = DateTime.now().difference(lastAfterImageUpload.value!).inDays;
+      log("Days since last upload: $daysSinceLastUpload");
+      isActionEnabled.value = daysSinceLastUpload >= 14;
+    }
+  }
+
+  void resetImages() {
+    beforeImage.value = null;
+    duringImage.value = null;
+    afterImage.value = null;
+    lastAfterImageUpload.value = DateTime.now();
+    isActionEnabled.value = false; // Disable the action button until 14 days pass
+  }
+
 
   void logImageSize(File imageFile, String description) {
     final int bytes = imageFile.lengthSync();
@@ -223,10 +246,10 @@ class Imagecontroller extends GetxController {
         'date': DateTime.now(),
         'latlong': latLong.string,
         "devicename": tank.devicename,
-        //'tankName': tank.tankName,
-        //'name': tank.name,
+        'tankName': tank.tankName,
+         'name': tank.devicename,
         'imei': tank.imei,
-        'tank_name': tankName,
+       // 'tank_name': tankName,
         'updatedBy': tank.username,
         'username': tank.username,
         'id': tank.id,
@@ -250,6 +273,10 @@ class Imagecontroller extends GetxController {
             duration: const Duration(seconds: 1),
             backgroundColor: Colors.green,
             colorText: Colors.white);
+        if (section.toLowerCase() == 'after') {
+          lastAfterImageUpload.value = DateTime.now(); // Set the current time as the last upload time for "after" images
+          _checkActionButtonStatus();
+        }
       } else {
         Get.snackbar("Error", "Failed to upload image",
             duration: const Duration(seconds: 1),

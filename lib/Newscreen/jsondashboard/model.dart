@@ -44,8 +44,11 @@ class Tank {
   String afterImg;
   String updatedAt;
   int? daysCountAfterClean;
+  DateTime? lastAfterImageUpload; // Store last "after" image upload date
   String tankLatlong;
   String id;
+ int displaydayscount=-1;
+
 
   Tank({
     required this.tankName,
@@ -67,6 +70,7 @@ class Tank {
     this.daysCountAfterClean,
     required this.tankLatlong,
     required this.id,
+    this.lastAfterImageUpload,
   });
 
   factory Tank.fromJson(Map<String, dynamic> json) {

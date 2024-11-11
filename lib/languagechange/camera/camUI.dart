@@ -6,19 +6,15 @@ import 'package:get/get.dart';
 import '../../Newscreen/jsondashboard/model.dart';
 import 'camcontroller.dart';
 class ImageScreen extends StatelessWidget {
-  final String tankName;
   final Tank tank;
-  final Tank beforeImg;
-  final Tank duringImg;
-  final Tank afterImg;
   final Imagecontroller controller = Get.put(Imagecontroller());
-  ImageScreen({Key? key, required this.tankName, required this.tank,required this.beforeImg, required this.duringImg, required this.afterImg}) : super(key: key);
+  ImageScreen({Key? key, required this.tank}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          tankName,
+         tank.tankName,
           style: const TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.green,
@@ -29,13 +25,15 @@ class ImageScreen extends StatelessWidget {
           },
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.add,size: 30,), // Replace with any icon you like
-            onPressed: () {
-              // Define the action you want to perform when this icon is pressed
-              print("Add icon pressed");
-            },
-          ),
+          Obx(() => IconButton(
+            icon: const Icon(Icons.add, size: 30),
+            onPressed: controller.isActionEnabled.value
+                ? () {
+              controller.resetImages();
+              Get.snackbar("Reset", "You can now upload new images.", duration: Duration(seconds: 1));
+            }
+                : null, // Disabled if action not enabled
+          )),
         ],
         iconTheme: const IconThemeData(color: Colors.white),
       ),
@@ -122,7 +120,7 @@ class ImageScreen extends StatelessWidget {
                     if (imageFile.value != null) {
                       String tankType = section == "before" ? "beforeImg" : section == "during"? "duringImg" : "afterImg";
                       log("Selection : $section");
-                      controller.uploadImage(imageFile.value!, tankName, tankType, tank);
+                      controller.uploadImage(imageFile.value!, tank.tankName, tankType, tank);
                     } else {
                       Get.snackbar("Error", "Please capture an image first", duration: const Duration(seconds: 1));
                     }
@@ -179,24 +177,24 @@ class ImageScreen extends StatelessWidget {
           border: Border.all(color: Colors.green),
           borderRadius: BorderRadius.circular(10.0),
         ),
-        child: useNetworkImage
-            ? Image.network(
-          imgUrl.replaceAll("https", "http"),
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) => const Icon(
-            Icons.error,
-            color: Colors.red,
-          ),
-        )
-            : imageFile.value == null
-            ? Icon(
-          Icons.camera_alt,
-          size: screenWidth * 0.15,
-          color: Colors.green,
-        )
-            : ClipRRect(
-          borderRadius: BorderRadius.circular(8.0),
-          child: Image.file(
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(9.0),
+          child: useNetworkImage
+              ? Image.network(
+            imgUrl.replaceAll("https", "http"),
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) => const Icon(
+              Icons.error,
+              color: Colors.red,
+            ),
+          )
+              : imageFile.value == null
+              ? Icon(
+            Icons.camera_alt,
+            size: screenWidth * 0.15,
+            color: Colors.green,
+          )
+              : Image.file(
             imageFile.value!,
             fit: BoxFit.cover,
             errorBuilder: (context, error, stackTrace) => const Icon(
@@ -205,7 +203,7 @@ class ImageScreen extends StatelessWidget {
             ),
           ),
         ),
-      ),
+      )
     );
   }
 
@@ -278,7 +276,7 @@ class ImageScreen extends StatelessWidget {
               Center(
                 child: Image.file(
                   image,
-                  fit: BoxFit.contain,
+                  fit: BoxFit.cover,
                 ),
               ),
               Positioned(
@@ -314,7 +312,7 @@ class ImageScreen extends StatelessWidget {
                 child: Image.network(
                   imgUrl,
                   // .replaceAll("https", "http"),
-                  fit: BoxFit.contain,
+                  fit: BoxFit.cover,
                   loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
                     if (loadingProgress == null) {
                       return child;
@@ -327,7 +325,7 @@ class ImageScreen extends StatelessWidget {
                     return Image.network(
                       imgUrl
                           .replaceAll("https", "http"),
-                      fit: BoxFit.contain,
+                      fit: BoxFit.cover,
                       loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
                         if (loadingProgress == null) {
                           return child;
@@ -340,7 +338,7 @@ class ImageScreen extends StatelessWidget {
                         return Image.network(
                           imgUrl
                               .replaceAll("https", "http"),
-                          fit: BoxFit.contain,
+                          fit: BoxFit.cover,
                           loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
                             if (loadingProgress == null) {
                               return child;
@@ -362,8 +360,8 @@ class ImageScreen extends StatelessWidget {
                 ),
               ),
               Positioned(
-                top: 20,
-                right: 20,
+                top: 10,
+                right: 8,
                 child: IconButton(
                   icon: const Icon(Icons.close, color: Colors.white, size: 30),
                   onPressed: () {

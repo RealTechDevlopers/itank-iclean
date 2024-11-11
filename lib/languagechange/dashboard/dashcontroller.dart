@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -10,6 +11,7 @@ class ListController extends GetxController {
   var errorMessage = ''.obs; // Observable for error messages
   // var selectedDropdownItem = 'Profile'.obs;
   var selectedLanguage = 'English'.obs;
+  // var tankList = <Tank>[].obs; // Tank list will automatically update
 
   final TankService tankService = TankService(); // Instance of the service to fetch tank data
   final box = GetStorage(); // Instance of GetStorage to access stored data
@@ -23,6 +25,9 @@ class ListController extends GetxController {
   //   selectedDropdownItem.value = newItem;
   // }
 
+  // Helper method to compute adjusted days count
+
+
   void changeLanguage(String language) {
     selectedLanguage.value = language;
     // Locate locale from selected language
@@ -33,6 +38,13 @@ class ListController extends GetxController {
       // update();
     }
   }
+  int computeDaysCountAfterClean(int? daysCountAfterClean) {
+    if (daysCountAfterClean != null && daysCountAfterClean > 15) {
+      return 15 - daysCountAfterClean; // Calculate negative if greater than 15
+    }
+    return daysCountAfterClean ?? 0; // Return original value or 0 if null
+  }
+
 
   // Fetch tanks from API and handle response based on the logged-in user
   Future<void> fetchTanks() async {
@@ -49,29 +61,33 @@ class ListController extends GetxController {
     }
 
     try {
-      // Pass username to the service for user-specific data
-      TankDataResponse? tankDataResponse = await tankService.fetchTanks(
-          username);
-
+      TankDataResponse? tankDataResponse = await tankService.fetchTanks(username);
       if (tankDataResponse != null) {
+        // Map the tank data to include computed days count
         tankList.assignAll(
-            tankDataResponse.data); // Populate tankList with real data
+          tankDataResponse.data.map((tank) {
+            tank.displaydayscount = computeDaysCountAfterClean(tank.daysCountAfterClean);
+            return tank;
+          }).toList(),
+        );
       } else {
         errorMessage('Failed to fetch data from API');
       }
     } catch (e) {
-      // Handle exceptions and set an error message
       errorMessage('An error occurred: $e');
     } finally {
-      isLoading(
-          false); // Stop loading after the data is fetched or an error occurs
+      isLoading(false);
     }
   }
+
 
   @override
   void onInit() {
     fetchTanks(); // Load initial data from the API when the controller initializes
     super.onInit();
+    Timer.periodic(Duration(days: 1), (timer) {
+      fetchTanks(); // Re-fetch data daily to update daysRemaining values
+    });
     final storedUsername = box.read('username');
     // Logout function for managing user session
     void logout() {

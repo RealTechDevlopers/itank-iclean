@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:intl/intl.dart';
 import '../../Newscreen/jsondashboard/model.dart';
 import '../camera/camUI.dart';
 import '../login/loginUI.dart';
@@ -25,6 +26,11 @@ class CleanCalendar extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
+        actions: [
+          IconButton(onPressed: (){
+            _showLogoutDialog(context, box);
+          }, icon: const Icon(Icons.logout))
+        ],
         backgroundColor: Colors.green,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
@@ -72,13 +78,13 @@ class CleanCalendar extends StatelessWidget {
               ),
             ),
             ExpansionTile(
-              leading: Icon(Icons.info, color: Colors.green),
+              leading: const Icon(Icons.info, color: Colors.green),
               title: Text('about iclean'.tr),
               children: [
                 ListTile(
                   title: Text(
                     "scheduled Cleanings".tr,
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
                     "tanks are scheduled for cleaning every 15 days to maintain compliance. The app highlights tanks due for cleaning."
@@ -88,7 +94,7 @@ class CleanCalendar extends StatelessWidget {
                 ListTile(
                   title: Text(
                     "overdue Notifications".tr,
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
                     "if tanks aren’t cleaned on time, the app shows indicators to alert users about overdue cleanings."
@@ -98,7 +104,7 @@ class CleanCalendar extends StatelessWidget {
                 ListTile(
                   title: Text(
                     "clean Status Tracking".tr,
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
                     "each cleaning stage ('Before,' 'During,' 'After') is recorded with timestamps, images, and status icons, providing full transparency in the maintenance lifecycle."
@@ -123,9 +129,9 @@ class CleanCalendar extends StatelessWidget {
                   child: DropdownButton<String>(
                     value: tankController.selectedLanguage.value,
                     dropdownColor: Colors.white,
-                    icon: Icon(Icons.arrow_drop_down, color: Colors.green),
+                    icon: const Icon(Icons.arrow_drop_down, color: Colors.green),
                     iconSize: 28,
-                    style: TextStyle(color: Colors.black, fontSize: 16),
+                    style: const TextStyle(color: Colors.black, fontSize: 16),
                     items: tankController.languages
                         .map((Map<String, String> lang) {
                       return DropdownMenuItem<String>(
@@ -183,22 +189,25 @@ class CleanCalendar extends StatelessWidget {
   }
 
   Widget _buildTankCard(Tank tank, double screenWidth) {
-    Color dueDaysColor = (tank.daysCountAfterClean ?? 0) > 3
-        ? Colors.green
-        : (tank.daysCountAfterClean ?? 0) >= 1
-            ? Colors.orange
-            : Colors.red;
+    Color dueDaysColor;
+    int? daysCountAfterClean = tank.displaydayscount ?? 0;
+
+    // int daysRemaining = tank.daysRemaining;
+    if (daysCountAfterClean > 3) {
+      dueDaysColor = Colors.green;
+    } else if (daysCountAfterClean >= 1) {
+      dueDaysColor = Colors.orange;
+    } else {
+      dueDaysColor = Colors.red;
+    }
 
     return GestureDetector(
       onTap: () {
-        log("comming");
+        log("coming");
         log(tank.beforeImg + tank.duringImg);
         Get.to(() => ImageScreen(
-              tankName: tank.tankName,
               tank: tank,
-              beforeImg: tank,
-              duringImg: tank,
-              afterImg: tank,
+
             ));
       },
       child: Card(
@@ -232,33 +241,42 @@ class CleanCalendar extends StatelessWidget {
                         Flexible(
                           flex: 1, // Adjust flex as needed
                           child: CircleAvatar(
-                            radius: screenWidth * 0.070,
+                            radius: screenWidth * 0.060,
                             backgroundColor: dueDaysColor,
+                            // child: Text(
+                            //   (tank.daysCountAfterClean ?? 0).toString(),
+                            //   style: TextStyle(
+                            //       color: Colors.white,
+                            //       fontSize: screenWidth * 0.03),
+                            // ),
                             child: Text(
-                              (tank.daysCountAfterClean ?? 0).toString(),
+                              daysCountAfterClean.toString(), // Display countdown days
                               style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: screenWidth * 0.03),
-                            ),
+                                color: Colors.white,
+                                fontSize: screenWidth * 0.04,
+                              ),
                           ),
-                        ),
+                          )
+                        )
                       ],
                     ),
                     SizedBox(height: screenWidth * 0.02),
                     Row(
                       children: [
                         Expanded(
-                          flex: 3, // Adjust flex as needed for spacing
+                          flex: 4, // Adjust flex as needed for spacing
                           child: Text(
                             "${"last cleaned date".tr}",
-                            style: TextStyle(fontSize: screenWidth * 0.038),
+                            style: TextStyle(fontSize: screenWidth * 0.036,fontWeight: FontWeight.bold),
                           ),
                         ),
+                        const Expanded(child: Text("-")),
                         Expanded(
-                          flex: 1, // Adjust flex as needed
+                          flex: 2, // Adjust flex as needed
                           child: Text(
-                            " ${tank}".tr,
-                            style: TextStyle(fontSize: screenWidth * 0.038),
+                            "11-11-2024",
+                            // " ${tank}".tr,
+                            style: TextStyle(fontSize: screenWidth * 0.036,fontWeight: FontWeight.bold),
                           ),
                         ),
                       ],
@@ -267,17 +285,24 @@ class CleanCalendar extends StatelessWidget {
                     Row(
                       children: [
                         Expanded(
-                          flex: 3, // Adjust flex as needed for spacing
+                          flex: 4, // Adjust flex as needed for spacing
                           child: Text(
                             "${"next cleaning date".tr}",
-                            style: TextStyle(fontSize: screenWidth * 0.038),
+                            style: TextStyle(fontSize: screenWidth * 0.036,fontWeight: FontWeight.bold),
                           ),
                         ),
+                        const Expanded(
+                            flex: 1,
+                            child: Text("-")),
                         Expanded(
-                          flex: 1, // Adjust flex as needed
+                          flex: 2,
                           child: Text(
-                            " ${tank}".tr,
-                            style: TextStyle(fontSize: screenWidth * 0.038),
+                            tank.lastAfterImageUpload != null
+                                ? DateFormat('yyyy-MM-dd').format(
+                              tank.lastAfterImageUpload!.add(const Duration(days: 14)),
+                            )
+                                : '26-11-2024',
+                            style: TextStyle(fontSize: screenWidth * 0.036,fontWeight: FontWeight.bold),
                           ),
                         ),
                       ],
