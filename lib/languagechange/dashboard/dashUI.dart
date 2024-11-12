@@ -7,7 +7,6 @@ import '../../Newscreen/jsondashboard/model.dart';
 import '../camera/camUI.dart';
 import '../login/loginUI.dart';
 import 'dashcontroller.dart';
-
 class CleanCalendar extends StatelessWidget {
   final String? username;
   final ListController tankController = Get.put(ListController());
@@ -190,12 +189,15 @@ class CleanCalendar extends StatelessWidget {
 
   Widget _buildTankCard(Tank tank, double screenWidth) {
     Color dueDaysColor;
-    int? daysCountAfterClean = tank.displaydayscount ?? 0;
-
+    int? daysCountAfterClean = tank.displaydayscount;
     // int daysRemaining = tank.daysRemaining;
-    if (daysCountAfterClean > 3) {
+    if (daysCountAfterClean == null) {
+      dueDaysColor = Colors.black; // Handle null case
+    } else if (daysCountAfterClean < 0) {
+      dueDaysColor = Colors.red; // Negative values
+    } else if (daysCountAfterClean < 12) {
       dueDaysColor = Colors.green;
-    } else if (daysCountAfterClean >= 1) {
+    } else if (daysCountAfterClean >= 12 && daysCountAfterClean <= 14) {
       dueDaysColor = Colors.orange;
     } else {
       dueDaysColor = Colors.red;
@@ -207,7 +209,6 @@ class CleanCalendar extends StatelessWidget {
         log(tank.beforeImg + tank.duringImg);
         Get.to(() => ImageScreen(
               tank: tank,
-
             ));
       },
       child: Card(
@@ -274,8 +275,8 @@ class CleanCalendar extends StatelessWidget {
                         Expanded(
                           flex: 2, // Adjust flex as needed
                           child: Text(
-                            "11-11-2024",
-                            // " ${tank}".tr,
+                            // "11-11-2024",
+                            " ${tank.lastCleaningDate}".tr,
                             style: TextStyle(fontSize: screenWidth * 0.036,fontWeight: FontWeight.bold),
                           ),
                         ),
@@ -297,11 +298,13 @@ class CleanCalendar extends StatelessWidget {
                         Expanded(
                           flex: 2,
                           child: Text(
-                            tank.lastAfterImageUpload != null
-                                ? DateFormat('yyyy-MM-dd').format(
-                              tank.lastAfterImageUpload!.add(const Duration(days: 14)),
-                            )
-                                : '26-11-2024',
+                            // tank.lastAfterImageUpload != null
+                            //     ? DateFormat('yyyy-MM-dd').format(
+                            //   tank.lastAfterImageUpload!.add(const Duration(days: 14)),
+                            // )
+                            //     : '26-11-2024',
+                            // style: TextStyle(fontSize: screenWidth * 0.036,fontWeight: FontWeight.bold),
+                            " ${tank.nextCleaningDate}".tr,
                             style: TextStyle(fontSize: screenWidth * 0.036,fontWeight: FontWeight.bold),
                           ),
                         ),

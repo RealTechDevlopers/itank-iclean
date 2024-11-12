@@ -48,6 +48,8 @@ class Tank {
   String tankLatlong;
   String id;
  int displaydayscount=-1;
+ String nextCleaningDate;
+ String lastCleaningDate;
 
 
   Tank({
@@ -71,6 +73,8 @@ class Tank {
     required this.tankLatlong,
     required this.id,
     this.lastAfterImageUpload,
+    required this.nextCleaningDate,
+    required this.lastCleaningDate,
   });
 
   factory Tank.fromJson(Map<String, dynamic> json) {
@@ -94,6 +98,8 @@ class Tank {
       daysCountAfterClean: json['daysCountAfterClean'],
       tankLatlong: json['tank_latlong'] ?? "",
       id: json['id'] ?? "",
+      nextCleaningDate: json['nextCleaningDate'] ?? "",
+      lastCleaningDate: json['lastCleaningDate'] ??"",
     );
   }
 
@@ -122,6 +128,8 @@ class Tank {
       'updatedAt': updatedAt,
       'daysCountAfterClean': daysCountAfterClean,
       'tank_latlong': tankLatlong,
+      'nextCleaningDate': nextCleaningDate,
+      'lastCleaningDate': lastCleaningDate,
     };
   }
 }

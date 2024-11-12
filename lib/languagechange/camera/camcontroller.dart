@@ -256,7 +256,7 @@ class Imagecontroller extends GetxController {
       });
 
       String apiUrl =
-          'http://devftp.itank.io/water/ineer/api/icleanApi/iclean_imgUpload.php';
+          'https://itank.io/api/icleanApi/iclean_imgUpload.php';
       Response response = await dio.post(
         apiUrl,
         data: formData,

@@ -237,7 +237,6 @@ class ImageScreen extends StatelessWidget {
       ],
     );
   }
-
   Widget _buildImageSection(
       BuildContext context,
       String section,
@@ -280,7 +279,8 @@ class ImageScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(9.0),
             child: useNetworkImage
                 ? Image.network(
-                    imgUrl.replaceAll("https", "http"),
+                    imgUrl,
+                        //.replaceAll("https", "http"),
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) => const Icon(
                       Icons.error,
@@ -305,7 +305,6 @@ class ImageScreen extends StatelessWidget {
           ),
         ));
   }
-
   Widget _buildNoImage(BuildContext context, String section, double screenWidth,
       double screenHeight) {
     return Column(
@@ -363,7 +362,6 @@ class ImageScreen extends StatelessWidget {
       ],
     );
   }
-
   void _showImageModal(BuildContext context, File image) {
     showDialog(
       context: context,
@@ -395,7 +393,6 @@ class ImageScreen extends StatelessWidget {
       },
     );
   }
-
   void _showImageModalURL(BuildContext context, String imgUrl) {
     // Log the URL to confirm it's correct
     log("Showing modal for image URL: $imgUrl");

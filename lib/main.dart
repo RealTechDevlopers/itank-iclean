@@ -16,11 +16,11 @@ import 'Newscreen/local/localUI.dart';
 import 'demo.dart';
 import 'languagechange/Splash/splashUI.dart';
 import 'languagechange/dashboard/languagecontroller.dart';
+
 void main() async {
   await GetStorage.init();
   runApp(const MyApp());
 }
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -31,7 +31,6 @@ class MyApp extends StatelessWidget {
     String? savedLanguage = box.read('language');
     Locale initialLocale = Locale('en', 'US'); // Default locale
 
-
     // Check saved language and set the initial locale accordingly
     if (savedLanguage != null) {
       if (savedLanguage == 'Tamil') {
@@ -40,11 +39,11 @@ class MyApp extends StatelessWidget {
         initialLocale = Locale('hi', 'IN');
       }
     }
-  //  langController.locale=initialLocale
-  return Obx(
-        ()=>  GetMaterialApp(
+    //  langController.locale=initialLocale
+    return Obx(
+      () => GetMaterialApp(
         translations: AppTranslations(),
-          locale: langController.locale,       // Initial locale
+        locale: langController.locale, // Initial locale
         fallbackLocale: Locale('ta', 'Es'), // Fallback locale
         // supportedLocales: const [
         //   Locale('en', 'US'),
@@ -56,25 +55,17 @@ class MyApp extends StatelessWidget {
         initialRoute: '/Splash1',
         getPages: [
           // New screens
-          GetPage(
-              name: '/Splash1',
-              page: () => Splash1()),
+          GetPage(name: '/Splash1', page: () => Splash1()),
 
-          GetPage(
-              name: '/DemoPage',
-              page: () => DemoPage()),
-      
-      
+          GetPage(name: '/New', page: () => New()),
+
           //Old screens
-          GetPage(
-              name: '/SplashScreen',
-              page: () => Splash()),
-          GetPage(
-              name: '/LocalUI',
-              page: () => LocalUI()),
+          GetPage(name: '/SplashScreen', page: () => Splash()),
+          GetPage(name: '/LocalUI', page: () => LocalUI()),
           GetPage(
               name: '/DashboardScreen',
-              page: () => DashboardScreen()), // Splash screen as the first route
+              page: () =>
+                  DashboardScreen()), // Splash screen as the first route
           GetPage(
               name: '/CleaningCalendar',
               page: () => CleaningCalendar(
@@ -105,9 +96,10 @@ class MyApp extends StatelessWidget {
                         afterImg: '',
                         updatedAt: '',
                         tankLatlong: '',
-                        id: ''),
-                  )
-          ), // Login screen route
+                        id: '',
+                        nextCleaningDate: '',
+                        lastCleaningDate: ''),
+                  )), // Login screen route
           //  GetPage(name: '/CleaningCalendar', page: () => CleaningCalendar(username: '',)),  // Dashboard or next screen route
         ],
         theme: ThemeData(

@@ -27,7 +27,6 @@ class ListController extends GetxController {
 
   // Helper method to compute adjusted days count
 
-
   void changeLanguage(String language) {
     selectedLanguage.value = language;
     // Locate locale from selected language
