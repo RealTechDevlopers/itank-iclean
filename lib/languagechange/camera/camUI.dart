@@ -14,7 +14,7 @@ class ImageScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-         tank.tankName,
+          tank.tankName,
           style: const TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.green,
@@ -26,14 +26,15 @@ class ImageScreen extends StatelessWidget {
         ),
         actions: [
           Obx(() => IconButton(
-            icon: const Icon(Icons.add, size: 30),
-            onPressed: controller.isActionEnabled.value
-                ? () {
-              controller.resetImages();
-              Get.snackbar("Reset", "You can now upload new images.", duration: Duration(seconds: 1));
-            }
-                : null, // Disabled if action not enabled
-          )),
+                icon: const Icon(Icons.add, size: 30),
+                onPressed: controller.isActionEnabled.value
+                    ? () {
+                        controller.resetImages();
+                        Get.snackbar("Reset", "You can now upload new images.",
+                            duration: Duration(seconds: 1));
+                      }
+                    : null, // Disabled if action not enabled
+              )),
         ],
         iconTheme: const IconThemeData(color: Colors.white),
       ),
@@ -43,40 +44,109 @@ class ImageScreen extends StatelessWidget {
           final screenHeight = constraints.maxHeight;
 
           return Obx(
-                () => Stack(
-              children: [
+            () => SingleChildScrollView(
+              child: Stack(children: [
                 Padding(
                   padding: EdgeInsets.all(screenWidth * 0.04),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      _buildSectionWithUpload(context, 'before', controller.beforeImage, controller, tank, screenWidth),
-                      SizedBox(height: screenHeight * 0.05),
-                      controller.beforeImage.value != null || tank.beforeImg != ""
-                          ? _buildSectionWithUpload(context, 'during', controller.duringImage, controller, tank, screenWidth)
-                          : _buildNoImage(context, 'during', screenWidth, screenHeight),
-                      SizedBox(height: screenHeight * 0.05),
-                      controller.duringImage.value != null || tank.duringImg != ""
-                          ? _buildSectionWithUpload(context, 'after', controller.afterImage, controller, tank, screenWidth)
-                          : _buildNoImage(context, 'after', screenWidth, screenHeight),
-                      SizedBox(height: screenHeight * 0.04),
-                      // Corrected StreamBuilder
+                      // "Before" Section
+                      Card(
+                        color: Colors.white,
+                        margin:
+                            EdgeInsets.symmetric(vertical: screenHeight * 0.02),
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.all(screenWidth * 0.04),
+                          child: _buildSectionWithUpload(
+                            context,
+                            'before',
+                            controller.beforeImage,
+                            controller,
+                            tank,
+                            screenWidth,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: screenHeight * 0.03),
+
+                      // "During" Section
+                      Card(
+                        color: Colors.white,
+                        margin:
+                            EdgeInsets.symmetric(vertical: screenHeight * 0.02),
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.all(screenWidth * 0.04),
+                          child: controller.beforeImage.value != null ||
+                                  tank.beforeImg != ""
+                              ? _buildSectionWithUpload(
+                                  context,
+                                  'during',
+                                  controller.duringImage,
+                                  controller,
+                                  tank,
+                                  screenWidth,
+                                )
+                              : _buildNoImage(
+                                  context, 'during', screenWidth, screenHeight),
+                        ),
+                      ),
+                      SizedBox(height: screenHeight * 0.03),
+
+                      // "After" Section
+                      Card(
+                        color: Colors.white,
+                        margin:
+                            EdgeInsets.symmetric(vertical: screenHeight * 0.02),
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.all(screenWidth * 0.04),
+                          child: controller.duringImage.value != null ||
+                                  tank.duringImg != ""
+                              ? _buildSectionWithUpload(
+                                  context,
+                                  'after',
+                                  controller.afterImage,
+                                  controller,
+                                  tank,
+                                  screenWidth,
+                                )
+                              : _buildNoImage(
+                                  context, 'after', screenWidth, screenHeight),
+                        ),
+                      ),
+                      SizedBox(height: screenHeight * 0.03),
+
+                      // Upload Progress Indicator
                       StreamBuilder<double>(
                         stream: controller.uploadProgressStream,
                         builder: (context, snapshot) {
                           if (snapshot.hasData && snapshot.data! > 0) {
                             return Column(
                               children: [
-                                Text("Uploading: ${snapshot.data!.toStringAsFixed(0)}%"),
+                                Text(
+                                    "Uploading: ${snapshot.data!.toStringAsFixed(0)}%"),
                                 CircularProgressIndicator(
-                                  value: snapshot.data! / 100, // Scale percentage to 0-1
+                                  value: snapshot.data! /
+                                      100, // Scale percentage to 0-1
                                   backgroundColor: Colors.green,
                                   color: Colors.green,
                                 ),
                               ],
                             );
                           } else {
-                            return SizedBox.shrink(); // Return empty widget if no data
+                            return SizedBox.shrink();
                           }
                         },
                       ),
@@ -84,45 +154,67 @@ class ImageScreen extends StatelessWidget {
                   ),
                 ),
                 if (controller.isLoading.value)
-                  const Center(
-                    child: CircularProgressIndicator(),
+                  Positioned.fill(
+                    child: Container(
+                    //  color: Colors.black.withOpacity(0.5), // Optional dim background
+                      child: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
                   ),
               ],
+              ),
             ),
           );
         },
       ),
     );
   }
-  Widget _buildSectionWithUpload(BuildContext context, String section, Rx<File?> imageFile, Imagecontroller controller, Tank tank, double screenWidth) {
+
+  Widget _buildSectionWithUpload(
+      BuildContext context,
+      String section,
+      Rx<File?> imageFile,
+      Imagecontroller controller,
+      Tank tank,
+      double screenWidth) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           section.tr,
-          style: TextStyle(fontSize: screenWidth * 0.045, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              fontSize: screenWidth * 0.045, fontWeight: FontWeight.bold),
         ),
         SizedBox(height: screenWidth * 0.03),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _buildImageSection(context, section.toLowerCase(), imageFile, controller, tank, screenWidth),
+            _buildImageSection(context, section.toLowerCase(), imageFile,
+                controller, tank, screenWidth),
             SizedBox(width: screenWidth * 0.02),
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(0.1), // Set a light background color
+                  color: Colors.green
+                      .withOpacity(0.1), // Set a light background color
                   borderRadius: BorderRadius.circular(8.0), // Rounded corners
                 ),
                 padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                 child: TextButton.icon(
                   onPressed: () {
                     if (imageFile.value != null) {
-                      String tankType = section == "before" ? "beforeImg" : section == "during"? "duringImg" : "afterImg";
+                      String tankType = section == "before"
+                          ? "beforeImg"
+                          : section == "during"
+                              ? "duringImg"
+                              : "afterImg";
                       log("Selection : $section");
-                      controller.uploadImage(imageFile.value!, tank.tankName, tankType, tank);
+                      controller.uploadImage(
+                          imageFile.value!, tank.tankName, tankType, tank);
                     } else {
-                      Get.snackbar("Error", "Please capture an image first", duration: const Duration(seconds: 1));
+                      Get.snackbar("Error", "Please capture an image first",
+                          duration: const Duration(seconds: 1));
                     }
                   },
                   icon: Icon(
@@ -134,7 +226,7 @@ class ImageScreen extends StatelessWidget {
                     'upload'.tr,
                     style: TextStyle(
                       color: Colors.green,
-                      fontSize: screenWidth * 0.035,
+                      fontSize: screenWidth * 0.027,
                     ),
                   ),
                 ),
@@ -145,7 +237,14 @@ class ImageScreen extends StatelessWidget {
       ],
     );
   }
-  Widget _buildImageSection(BuildContext context, String section, Rx<File?> imageFile, Imagecontroller controller, Tank tank, double screenWidth) {
+
+  Widget _buildImageSection(
+      BuildContext context,
+      String section,
+      Rx<File?> imageFile,
+      Imagecontroller controller,
+      Tank tank,
+      double screenWidth) {
     String imgUrl = "";
     bool useNetworkImage = false;
     if (section == "before" && tank.beforeImg != "") {
@@ -160,60 +259,62 @@ class ImageScreen extends StatelessWidget {
     }
 
     return GestureDetector(
-      onTap: () {
-        controller.pickImageWithLocation(section);
-      },
-      onLongPress: () {
-        if (useNetworkImage) {
-          _showImageModalURL(context, imgUrl);
-        } else if (imageFile.value != null) {
-          _showImageModal(context, imageFile.value!);
-        }
-      },
-      child: Container(
-        width: screenWidth * 0.4,
-        height: screenWidth * 0.4,
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.green),
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(9.0),
-          child: useNetworkImage
-              ? Image.network(
-            imgUrl.replaceAll("https", "http"),
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) => const Icon(
-              Icons.error,
-              color: Colors.red,
-            ),
-          )
-              : imageFile.value == null
-              ? Icon(
-            Icons.camera_alt,
-            size: screenWidth * 0.15,
-            color: Colors.green,
-          )
-              : Image.file(
-            imageFile.value!,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) => const Icon(
-              Icons.error,
-              color: Colors.red,
-            ),
+        onTap: () {
+          controller.pickImageWithLocation(section);
+        },
+        onLongPress: () {
+          if (useNetworkImage) {
+            _showImageModalURL(context, imgUrl);
+          } else if (imageFile.value != null) {
+            _showImageModal(context, imageFile.value!);
+          }
+        },
+        child: Container(
+          width: screenWidth * 0.4,
+          height: screenWidth * 0.4,
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.green),
+            borderRadius: BorderRadius.circular(10.0),
           ),
-        ),
-      )
-    );
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(9.0),
+            child: useNetworkImage
+                ? Image.network(
+                    imgUrl.replaceAll("https", "http"),
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => const Icon(
+                      Icons.error,
+                      color: Colors.red,
+                    ),
+                  )
+                : imageFile.value == null
+                    ? Icon(
+                        Icons.camera_alt,
+                        size: screenWidth * 0.15,
+                        color: Colors.green,
+                      )
+                    : Image.file(
+                        imageFile.value!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(
+                          Icons.error,
+                          color: Colors.red,
+                        ),
+                      ),
+          ),
+        ));
   }
 
-  Widget _buildNoImage(BuildContext context, String section, double screenWidth, double screenHeight) {
+  Widget _buildNoImage(BuildContext context, String section, double screenWidth,
+      double screenHeight) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           section.tr,
-          style: TextStyle(fontSize: screenWidth * 0.045, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              fontSize: screenWidth * 0.045, fontWeight: FontWeight.bold),
         ),
         SizedBox(height: screenWidth * 0.03),
         Row(
@@ -235,14 +336,13 @@ class ImageScreen extends StatelessWidget {
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.grey.withOpacity(0.1), // Set a light background color
+                  color: Colors.grey
+                      .withOpacity(0.1), // Set a light background color
                   borderRadius: BorderRadius.circular(8.0), // Rounded corners
                 ),
                 padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                 child: TextButton.icon(
-                  onPressed: () {
-
-                  },
+                  onPressed: () {},
                   icon: Icon(
                     Icons.upload_file,
                     color: Colors.grey,
@@ -252,7 +352,7 @@ class ImageScreen extends StatelessWidget {
                     'upload'.tr,
                     style: TextStyle(
                       color: Colors.grey,
-                      fontSize: screenWidth * 0.035,
+                      fontSize: screenWidth * 0.027,
                     ),
                   ),
                 ),
@@ -313,7 +413,8 @@ class ImageScreen extends StatelessWidget {
                   imgUrl,
                   // .replaceAll("https", "http"),
                   fit: BoxFit.cover,
-                  loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                  loadingBuilder: (BuildContext context, Widget child,
+                      ImageChunkEvent? loadingProgress) {
                     if (loadingProgress == null) {
                       return child;
                     } else {
@@ -323,27 +424,29 @@ class ImageScreen extends StatelessWidget {
                   errorBuilder: (context, error, stackTrace) {
                     log("Failed to load image: $error");
                     return Image.network(
-                      imgUrl
-                          .replaceAll("https", "http"),
+                      imgUrl.replaceAll("https", "http"),
                       fit: BoxFit.cover,
-                      loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                      loadingBuilder: (BuildContext context, Widget child,
+                          ImageChunkEvent? loadingProgress) {
                         if (loadingProgress == null) {
                           return child;
                         } else {
-                          return const Center(child: CircularProgressIndicator());
+                          return const Center(
+                              child: CircularProgressIndicator());
                         }
                       },
                       errorBuilder: (context, error, stackTrace) {
                         log("Failed to load image: $error");
                         return Image.network(
-                          imgUrl
-                              .replaceAll("https", "http"),
+                          imgUrl.replaceAll("https", "http"),
                           fit: BoxFit.cover,
-                          loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                          loadingBuilder: (BuildContext context, Widget child,
+                              ImageChunkEvent? loadingProgress) {
                             if (loadingProgress == null) {
                               return child;
                             } else {
-                              return const Center(child: CircularProgressIndicator());
+                              return const Center(
+                                  child: CircularProgressIndicator());
                             }
                           },
                           errorBuilder: (context, error, stackTrace) {

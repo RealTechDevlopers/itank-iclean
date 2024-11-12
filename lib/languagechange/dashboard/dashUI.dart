@@ -65,7 +65,7 @@ class CleanCalendar extends StatelessWidget {
                           Text('${'union'.tr}: ${firstTank.unionName}',
                               style: const TextStyle(color: Colors.white)),
                           Text(
-                              '${'tank Capacity'.tr}: ${firstTank.capacity} ${'Liters'.tr}',
+                              '${'tank Capacity'.tr}: ${firstTank.capacity} ${'L'.tr}',
                               style: const TextStyle(color: Colors.white)),
                         ],
                       );
